@@ -37,21 +37,24 @@ class Board extends React.Component {
 
     // tiles should be past in as props later
     let tiles = [
+        [1, 2, 3],
         [4, 0, 5],
+        [6, 7, 8],
     ]
 
     let tileSize = 100;
-    tiles = tiles.map((tileRow, i) => {
+    let styles = tiles.map((tileRow, i) => {
       return tileRow.map((tile, j) => {
         const top = i * tileSize;
         const left = j * tileSize;
-        return {id: tile, style: {top: top, left: left, width: tileSize}}
+        return {top: top, left: left, width: tileSize}
       })
     })
 
     console.log(tiles)
     this.state = {
       tiles: tiles,
+      styles: styles,
       isMoving: false,
       swapOrigin: null, 
       start: {top: 0, left: 0}
@@ -60,7 +63,7 @@ class Board extends React.Component {
 
   moveableTiles = () => {
     const empty = this.findEmptySlot();
-    const neighbours = this.neighbours(empty[0], empty[1]);
+    const neighbours = this.neighbours(empty);
     neighbours.add(empty.toString());
     return neighbours;
   }
@@ -71,7 +74,7 @@ class Board extends React.Component {
     tiles.forEach((row, i) => {
       row.forEach((tile, j) => {
         if (tile.id === 0) {
-          emptyIdx = [i, j]
+          emptyIdx = {i, j}
         }
       })
     });
@@ -88,7 +91,7 @@ class Board extends React.Component {
     return moveableTiles.has([i, j].toString());
   }
 
-  neighbours = (i, j) => {
+  neighbours = ({i, j}) => {
     const directions = [
       [1, 0], // up
       [0, 1], // right
@@ -138,47 +141,17 @@ class Board extends React.Component {
     this.setState({isMoving: false})
   }
 
-  moveVertical = (tiles, {i, j}, amount, mouseY) => {
-    let top = tiles[i][j].style.top + amount;
-    let {style} = tiles[i][j];
-    style = {...style, top: top}
-    tiles[i][j].style = style
-    return tiles
-  }
-  
-  moveVertical = (tiles, {i, j}, amount, mouseY) => {
-    let left = tiles[i][j].style.left + amount;
-    let {style} = tiles[i][j];
-    style = {...style, left: left}
-    tiles[i][j].style = style
-    return tiles;
-  }
 
-  moveTile = ({i, j}, dir, amount, {mouseX, mouseY})  => {
-    let tiles = this.state.tiles.slice()
-
-    switch(dir) {
-      case "top":
-        tiles = this.moveVertical(tiles, {i, j}, amount, mouseY);
-        break;
-      case "left":
-        tiles = this.moveHortizontal(tiles, {i, j}, amount, mouseX);
-        break;
-      default:
-        break;
-    }
-
-    this.setState({tiles: tiles});
-
-  }
 
   handleOnMouseMove = (e) => {
     if (this.state.isMoving) {
       console.log("mouse moved")
       const { swapOrigin } = this.state;
+
       const mouseX = e.pageX;
+      const mouseY = e.pageY;
+
       const offsetX = mouseX - this.state.start.left;
-      this.moveTile(swapOrigin, "top", offsetX, mouseX)
     }
 
   }
@@ -188,19 +161,23 @@ class Board extends React.Component {
     const {i: x, j: y} = to;
 
     let tiles = this.state.tiles.slice();
-
     let temp = tiles[i][j];
     tiles[i][j] = tiles[x][y];
     tiles[x][y] = temp;
 
-    this.setState({ tiles: tiles })
+    let styles = this.state.styles.slice();
+    temp = styles[i][j];
+    styles[i][j] = styles[x][y];
+    styles[x][y] = temp;
+
+    this.setState({ tiles: tiles, styles: styles})
   };
 
   renderTiles = () => {
     return this.state.tiles.map((row, i) => {
       return row.map((tile, j) => {
-        const val = this.state.tiles[i][j].id;
-        const style = this.state.tiles[i][j].style;
+        const val = this.state.tiles[i][j];
+        const style = this.state.styles[i][j];
         console.log("Rendering tile")
 
         return (
@@ -259,7 +236,7 @@ class Moveable extends React.Component {
   render() {
     return (
       <div 
-        className="tile" 
+        className="tile moveable" 
         onMouseDown={(e) => this.handleOnMouseDown(e)}
         onMouseUp={(e) => this.handleOnMouseUp(e)}
         onMouseMove={(e) => this.handleOnMouseMove(e)}
