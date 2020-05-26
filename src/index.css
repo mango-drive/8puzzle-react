@@ -19,13 +19,6 @@ code {
   box-sizing: border-box;
 }
 
-.board {
-  display: grid;
-  grid-template-columns: 100px 100px 100px;
-  grid-template-rows: 100px 100px 100px;
-  padding: 10px;
-}
-
 .tile {
   background-color: aqua;
   border: 1px solid black;
@@ -37,7 +30,6 @@ code {
   color: grey;
   border-radius: 5px;
   border: 1px solid black;
-
 }
 
 .tile-content {
@@ -56,4 +48,10 @@ code {
    -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
   -webkit-user-select: none; /* Chrome, Safari, and Opera */
   -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+}
+
+.moveable {
+  position: absolute;
+  width: 100px;
+  height: 100px;
 }

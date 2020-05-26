@@ -21,6 +21,7 @@ class Tile extends React.Component {
       // outer div for the card
       <div
         className={this.props.className}
+        style={this.props.style}
         onMouseDown={this.props.onMouseDown}
         onMouseEnter={this.props.onMouseEnter}
       >
@@ -33,14 +34,27 @@ class Tile extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      tiles: [
-        [1, 2, 3],
+
+    // tiles should be past in as props later
+    let tiles = [
         [4, 0, 5],
-        [6, 7, 8]
-      ],
+    ]
+
+    let tileSize = 100;
+    tiles = tiles.map((tileRow, i) => {
+      return tileRow.map((tile, j) => {
+        const top = i * tileSize;
+        const left = j * tileSize;
+        return {id: tile, style: {top: top, left: left, width: tileSize}}
+      })
+    })
+
+    console.log(tiles)
+    this.state = {
+      tiles: tiles,
       isMoving: false,
       swapOrigin: null, 
+      start: {top: 0, left: 0}
     }
   }
 
@@ -56,7 +70,7 @@ class Board extends React.Component {
     let emptyIdx;
     tiles.forEach((row, i) => {
       row.forEach((tile, j) => {
-        if (tile === 0) {
+        if (tile.id === 0) {
           emptyIdx = [i, j]
         }
       })
@@ -99,21 +113,74 @@ class Board extends React.Component {
     return 0 <= i && i <= this.state.tiles.length && 0 <= j && j <= this.state.tiles[0].length;
   }
 
-  handleOnMouseDown(i, j) {
+  handleOnMouseDown(i, j, event) {
+    
     if (!this.state.isMoving && this.isMoveable(i, j)) {
-      this.setState({isMoving: true, swapOrigin: {i, j}})
+      console.log("mouse down on moveable tile")
+      const startY = event.pageY;
+      const startX = event.pageX;
+      this.setState({
+          isMoving: true, 
+          swapOrigin: {i, j},
+          start: {left: startX, top: startY}
+        })
     }
   }
 
   handleOnMouseEnter(i, j) {
-    if (this.state.isMoving && this.isMoveable(i, j)) {
-      this.swapTiles(this.state.swapOrigin, {i, j});
-      this.setState({swapOrigin: {i, j}})
-    }
+    // if (this.state.isMoving && this.isMoveable(i, j)) {
+    //   this.swapTiles(this.state.swapOrigin, {i, j});
+    //   this.setState({swapOrigin: {i, j}})
+    // }
   }
 
   handleOnMouseUp = () => {
     this.setState({isMoving: false})
+  }
+
+  moveVertical = (tiles, {i, j}, amount, mouseY) => {
+    let top = tiles[i][j].style.top + amount;
+    let {style} = tiles[i][j];
+    style = {...style, top: top}
+    tiles[i][j].style = style
+    return tiles
+  }
+  
+  moveVertical = (tiles, {i, j}, amount, mouseY) => {
+    let left = tiles[i][j].style.left + amount;
+    let {style} = tiles[i][j];
+    style = {...style, left: left}
+    tiles[i][j].style = style
+    return tiles;
+  }
+
+  moveTile = ({i, j}, dir, amount, {mouseX, mouseY})  => {
+    let tiles = this.state.tiles.slice()
+
+    switch(dir) {
+      case "top":
+        tiles = this.moveVertical(tiles, {i, j}, amount, mouseY);
+        break;
+      case "left":
+        tiles = this.moveHortizontal(tiles, {i, j}, amount, mouseX);
+        break;
+      default:
+        break;
+    }
+
+    this.setState({tiles: tiles});
+
+  }
+
+  handleOnMouseMove = (e) => {
+    if (this.state.isMoving) {
+      console.log("mouse moved")
+      const { swapOrigin } = this.state;
+      const mouseX = e.pageX;
+      const offsetX = mouseX - this.state.start.left;
+      this.moveTile(swapOrigin, "top", offsetX, mouseX)
+    }
+
   }
 
   swapTiles = (from, to) => {
@@ -130,18 +197,21 @@ class Board extends React.Component {
   };
 
   renderTiles = () => {
-    
     return this.state.tiles.map((row, i) => {
       return row.map((tile, j) => {
-        const val = this.state.tiles[i][j];
+        const val = this.state.tiles[i][j].id;
+        const style = this.state.tiles[i][j].style;
+        console.log("Rendering tile")
+
         return (
           <Tile
-            className={val === 0 ? 'blank-tile' : 'tile'}
-            onMouseDown={() => this.handleOnMouseDown(i, j)}
-            onMouseEnter={() => this.handleOnMouseEnter(i, j)}
-            onMouseUp={() => this.handleOnMouseUp(i, j)}
+            className={`${val === 0 ? "moveable blank-tile": "moveable tile"}`}
+            onMouseDown={(e) => this.handleOnMouseDown(i, j, e)}
+            onMouseEnter={(e) => this.handleOnMouseEnter(i, j)}
+            onMouseUp={(e) => this.handleOnMouseUp(i, j)}
             key={val}
             id={val}
+            style = {style}
           />
         )
       })
@@ -149,6 +219,54 @@ class Board extends React.Component {
   }
 
   render() {
-    return <div className="board">{this.renderTiles()}</div>
+    return <div 
+            className="board"
+            onMouseMove={(e) => this.handleOnMouseMove(e)}
+            >
+              {this.renderTiles()}
+            </div>
   }
+}
+
+class Moveable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      style: { top: 0, left: 0 },
+      isMoving: false,
+      start: { x: 0, y: 0}
+    }
+  }
+
+  handleOnMouseDown(event) {
+    const startY = event.pageY;
+    this.setState({isMoving: true, start: {y: startY}});
+  }
+
+  handleOnMouseUp(event) {
+    this.setState({isMoving: false})
+  }
+
+  handleOnMouseMove(event) {
+    if (this.state.isMoving) {
+      const mouseY = event.pageY;
+      const offsetY = mouseY - this.state.start.y;
+      const top = this.state.style.top + offsetY;
+      this.setState({style: {top: top}, start: {y: mouseY}});
+    }
+  }
+
+  render() {
+    return (
+      <div 
+        className="tile" 
+        onMouseDown={(e) => this.handleOnMouseDown(e)}
+        onMouseUp={(e) => this.handleOnMouseUp(e)}
+        onMouseMove={(e) => this.handleOnMouseMove(e)}
+        style = {this.state.style}
+      >
+      </div>
+    )
+  }
+
 }
