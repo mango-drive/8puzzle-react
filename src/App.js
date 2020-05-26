@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
+import {findEmptySlot} from './util'
 import './App.css';
 import './index.css'
 
@@ -56,31 +57,19 @@ class Board extends React.Component {
       tiles: tiles,
       styles: styles,
       isMoving: false,
-      swapOrigin: null, 
-      start: {top: 0, left: 0}
+      selectedTile: null, 
+      start: {top: 0, left: 0},
+      offset: {top: 0, left: 0}
     }
   }
 
   moveableTiles = () => {
-    const empty = this.findEmptySlot();
-    const neighbours = this.neighbours(empty);
-    neighbours.add(empty.toString());
+    const empty = findEmptySlot(this.state.tiles);
+    const neighbours = neighbours(empty);
+    neighbours.push(empty);
     return neighbours;
   }
 
-  findEmptySlot = () => {
-    const tiles = this.state.tiles;
-    let emptyIdx;
-    tiles.forEach((row, i) => {
-      row.forEach((tile, j) => {
-        if (tile.id === 0) {
-          emptyIdx = {i, j}
-        }
-      })
-    });
-
-    return emptyIdx;
-  }
 
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
@@ -91,30 +80,6 @@ class Board extends React.Component {
     return moveableTiles.has([i, j].toString());
   }
 
-  neighbours = ({i, j}) => {
-    const directions = [
-      [1, 0], // up
-      [0, 1], // right
-      [-1, 0], // down
-      [0, -1], // up
-    ]
-
-    let neighbours = new Set()
-
-    // iterate over directions and add indices that are in bounds to the set
-    directions.forEach( ([dx, dy]) => {
-      const neighbourIdx = [i+dx, j+dy]
-      if(this.isValidIdx(neighbourIdx[0], neighbourIdx[1])) {
-        neighbours.add(neighbourIdx.toString())
-      }
-    })
-
-    return neighbours;
-  }
-
-  isValidIdx = (i, j) => {
-    return 0 <= i && i <= this.state.tiles.length && 0 <= j && j <= this.state.tiles[0].length;
-  }
 
   handleOnMouseDown(i, j, event) {
     
@@ -146,7 +111,7 @@ class Board extends React.Component {
   handleOnMouseMove = (e) => {
     if (this.state.isMoving) {
       console.log("mouse moved")
-      const { swapOrigin } = this.state;
+      const { selectedTile: swapOrigin } = this.state;
 
       const mouseX = e.pageX;
       const mouseY = e.pageY;
