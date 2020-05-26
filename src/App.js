@@ -24,7 +24,7 @@ class Tile extends React.Component {
         onMouseDown={this.props.onMouseDown}
         onMouseEnter={this.props.onMouseEnter}
       >
-        <div className='tile-content'>{this.props.id}</div>
+        <div className='tile-content disable-selection'>{this.props.id}</div>
       </div>
     );
   }
@@ -40,22 +40,73 @@ class Board extends React.Component {
         [6, 7, 8]
       ],
       isMoving: false,
-      swapOrigin: null
+      swapOrigin: null, 
     }
+  }
+
+  moveableTiles = () => {
+    const empty = this.findEmpty();
+    const neighbours = this.neighbours(empty[0], empty[1]);
+    neighbours.add(empty.toString());
+    return neighbours;
+  }
+
+  findEmpty = () => {
+    const tiles = this.state.tiles;
+    let emptyIdx;
+    tiles.forEach((row, i) => {
+      row.forEach((tile, j) => {
+        if (tile === 0) {
+          emptyIdx = [i, j]
+        }
+      })
+    });
+
+    return emptyIdx;
   }
 
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
 
+  isMoveable = (i, j) => {
+    const moveableTiles = this.moveableTiles();
+    return moveableTiles.has([i, j].toString());
+  }
+
+  neighbours = (i, j) => {
+    const directions = [
+      [1, 0], // up
+      [0, 1], // right
+      [-1, 0], // down
+      [0, -1], // up
+    ]
+
+    let neighbours = new Set()
+
+    // iterate over directions and add indices that are in bounds to the set
+    directions.forEach( ([dx, dy]) => {
+      const neighbourIdx = [i+dx, j+dy]
+      if(this.isValidIdx(neighbourIdx[0], neighbourIdx[1])) {
+        neighbours.add(neighbourIdx.toString())
+      }
+    })
+
+    return neighbours;
+  }
+
+  isValidIdx = (i, j) => {
+    return 0 <= i && i <= this.state.tiles.length && 0 <= j && j <= this.state.tiles[0].length;
+  }
+
   handleOnMouseDown(i, j) {
-    if (!this.state.isMoving && this.state.tiles[i][j] == 0) {
+    if (!this.state.isMoving && this.isMoveable(i, j)) {
       this.setState({isMoving: true, swapOrigin: {i, j}})
     }
   }
 
   handleOnMouseEnter(i, j) {
-    if (this.state.isMoving) {
+    if (this.state.isMoving && this.isMoveable(i, j)) {
       this.swapTiles(this.state.swapOrigin, {i, j});
       this.setState({swapOrigin: {i, j}})
     }
@@ -79,6 +130,7 @@ class Board extends React.Component {
   };
 
   renderTiles = () => {
+    
     return this.state.tiles.map((row, i) => {
       return row.map((tile, j) => {
         const val = this.state.tiles[i][j];
