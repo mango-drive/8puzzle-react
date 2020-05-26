@@ -45,13 +45,13 @@ class Board extends React.Component {
   }
 
   moveableTiles = () => {
-    const empty = this.findEmpty();
+    const empty = this.findEmptySlot();
     const neighbours = this.neighbours(empty[0], empty[1]);
     neighbours.add(empty.toString());
     return neighbours;
   }
 
-  findEmpty = () => {
+  findEmptySlot = () => {
     const tiles = this.state.tiles;
     let emptyIdx;
     tiles.forEach((row, i) => {
