@@ -1,7 +1,14 @@
 
-export const findZero = (tiles) => {
+export const DIRECTIONS = {
+  UP: {x: 0, y: 1},
+  LEFT: {x: 1, y: 0},
+  DOWN: {x: 0, y: -1},
+  RIGHT: {x: -1, y: 0},
+}
+
+export const findZero = (arr) => {
     let emptyIdx;
-    tiles.forEach((row, i) => {
+    arr.forEach((row, i) => {
       row.forEach((tile, j) => {
         if (tile === 0) {
           emptyIdx = {i, j}
@@ -45,4 +52,24 @@ export const swap = (arr, from, to) => {
     let tmp = arr[i][j];
     arr[i][j] = arr[x][y];
     arr[x][y] = tmp;
+}
+
+
+export const filterByAllowableDirection = (delta, allowableDirection) => {
+  let {dx, dy} = delta;
+  const {x, y} = allowableDirection;
+
+  dx = dx * Math.abs(x);
+  dy = dy * Math.abs(y);
+
+  dx = dx * x > 0 ? dx : 0;
+  dy = dy * y > 0 ? dy : 0;
+
+  return {dx: dx, dy: dy};
+}
+
+export const directionOfZero = (arr, idx) => {
+  const {i: iOfZero, j: jOfZero} = findZero(arr);
+  const {i, j} = idx;
+  return {x: j - jOfZero, y: i - iOfZero};
 }
