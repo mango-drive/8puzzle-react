@@ -52,6 +52,11 @@ export const neighbours = (arr, {i, j}) => {
     return neighbours;
 }
 
+export const  neighboursOfZero = (arr) => {
+    const emptySlot = findZero(arr);
+    return neighbours(arr, emptySlot);
+}
+
 export const isValidIdx = (n, {i, j}) => {
     return 0 <= i && i <= n && 0 <= j && j <= n;
 }
@@ -82,29 +87,46 @@ export const directionOfZero = (arr, idx) => {
 }
 
 
-export const boundsOfTile = (tiles, styles, tileIdx) => {
-  const tileStyle = styles[tileIdx.i][tileIdx.j]
+export const calcMaxOffset = (arr, styles, idx) => {
 
-  const slotIdx = findZero(tiles);
-  const slotStyle = styles[slotIdx.i][slotIdx.j]
+  const slotIdx = findZero(arr);
 
-  const topMin = Math.min(tileStyle.top, slotStyle.top);
-  const topMax = Math.max(tileStyle.top, slotStyle.top);
+  // TODO if slot is not in neighbours, allow a small maxOffset
+  // and animate a return 
 
-  const leftMin = Math.min(tileStyle.left, slotStyle.left);
-  const leftMax = Math.max(tileStyle.left, slotStyle.left);
+  const slotPos = styles[slotIdx.i][slotIdx.j];
 
-  return {topMin, topMax, leftMin, leftMax}
+  const {i, j} = idx;
+  const tilePos = styles[i][j];
+  
+  const dx = slotPos.left - tilePos.left;
+  const dy = slotPos.top - tilePos.top;
+
+  return {dx, dy}
 }
 
-export const constrainDrag = (dragTarget, bounds) => {
-  dragTarget.top = Math.max(dragTarget.top, bounds.topMin);
-  dragTarget.top = Math.min(dragTarget.top, bounds.topMax);
 
-  dragTarget.left = Math.max(dragTarget.left, bounds.leftMin);
-  dragTarget.left = Math.min(dragTarget.left, bounds.leftMax);
 
-  return dragTarget;
+export const constrainOffset = (offset, tile, tiles, styles) => {
+  const maxOffset = calcMaxOffset(tiles, styles, tile);
+
+  if (Math.sign(maxOffset.dx) !== Math.sign(offset.dx)) {
+    offset.dx = 0;
+  } else if (Math.abs(offset.dx) > Math.abs(maxOffset.dx)) {
+    offset.dx = maxOffset.dx;
+  }
+
+  if (Math.sign(maxOffset.dy) !== Math.sign(offset.dy)) {
+    offset.dy = 0;
+  } else if (Math.abs(offset.dy) > Math.abs(maxOffset.dy)) {
+    offset.dy = maxOffset.dy;
+  }
+
+  return offset;
+}
+
+export const constrainDrag = (offset, maxOffset) => {
+
 }
 
 export const dragTile = (tile, mouseDelta) => {

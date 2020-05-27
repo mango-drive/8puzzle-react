@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {findZero, initialiseStyles, neighbours, swap, boundsOfTile, constrainDrag} from './util'
+import {findZero, neighboursOfZero, initialiseStyles, neighbours, swap, constrainOffset} from './util'
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -21,24 +21,22 @@ export class Board extends React.Component {
     this.state = {
       tiles: tiles,
       styles: styles,
+      tileSize: tileSize,
       isMoving: false,
       selectedTile: null, 
       prevMouse: {x: 0, y: 0},
+      offset: {dx: 0, dy: 0},
     }
   }
 
 
-  moveableTiles = () => {
-    const emptySlot = findZero(this.state.tiles);
-    return neighbours(this.state.tiles, emptySlot);
-  }
 
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
 
   isMoveable = ({i, j}) => {
-    const moveableTiles = this.moveableTiles();
+    const moveableTiles = neighboursOfZero(this.state.tiles);
     return moveableTiles.has(JSON.stringify({i, j}));
   }
 
@@ -47,7 +45,8 @@ export class Board extends React.Component {
       this.setState({
           isMoving: true, 
           selectedTile: {i, j},
-          prevMouse: {x: event.pageX, y: event.pageY}
+          prevMouse: {x: event.pageX, y: event.pageY},
+          offset: {dx: 0, dy: 0}
         })
     }
   }
@@ -64,9 +63,18 @@ export class Board extends React.Component {
 
   handleOnMouseMove = (e) => {
     if (this.state.isMoving) {
-      const { selectedTile } = this.state;
-      this.dragTile(selectedTile, this.mouseDelta(e))
-      this.setState({prevMouse: {x: e.pageX, y: e.pageY}})
+      const { selectedTile, prevMouse, styles, tiles} = this.state;
+      let {offset} = this.state;
+
+      let {dx, dy} = this.mouseDelta(e);
+      offset.dx += dx;
+      offset.dy += dy;
+      offset = constrainOffset(offset, selectedTile, tiles, styles);
+
+      
+
+      const prevM = {x: e.pageX, y: e.pageY}
+      this.setState({offset: offset, prevMouse: prevM})
     }
   }
 
@@ -82,14 +90,19 @@ export class Board extends React.Component {
   }
 
   renderTiles = () => {
-    const {tiles, styles,} = this.state;
+    const {isMoving, tiles, styles, offset} = this.state;
 
     return tiles.map((row, i) => {
       return row.map((tile, j) => {
 
         const val = tiles[i][j];
-        const style = styles[i][j];
+        let style = styles[i][j];
 
+        if (isMoving && this.isSelected({i, j})) {
+            const newTop = style.top + offset.dy;
+            const newLeft = style.left + offset.dx;
+            style = {...style, top: newTop, left: newLeft}
+        }
 
         return (
           <Tile

@@ -4,11 +4,11 @@ import {
   DIRECTIONS,
   findZero,
   directionOfZero,
-  boundsOfTile,
+  calcMaxOffset,
   initialiseStyles,
   constrainDrag,
+  constrainOffset,
 } from './util'
-
 
 test('makes vertical delta equal 0 when AD is horizontal', () => {
   const mouseDelta = {dx: 10, dy: 10};
@@ -105,18 +105,18 @@ test('Returns up when 0 is up', () => {
   expect(direction).toEqual(DIRECTIONS.UP);
 })
 
-test('Returns top bounds when zero is above', () => {
+test('maxOffset Returns top bounds when zero is above', () => {
   const tileSize = 10;
   const arr = [
     [0],
     [1]
   ]
   const styles = initialiseStyles(arr, tileSize);
-  const {topMin} = boundsOfTile(arr, styles, {i: 1, j: 0})
-  expect(topMin).toEqual(0)
+  const {dy} = calcMaxOffset(arr, styles, {i: 1, j: 0})
+  expect(dy).toEqual(-10)
 })
 
-test('Returns top bounds when zero is below', () => {
+test('maxOffset Returns top bounds when zero is below', () => {
   const tileSize = 10;
   const arr = [
     [1],
@@ -124,62 +124,88 @@ test('Returns top bounds when zero is below', () => {
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = boundsOfTile(arr, styles, {i: 1, j: 0})
+  const {dy} = calcMaxOffset(arr, styles, {i: 0, j: 0})
 
-  expect(topMax).toEqual(10)
+  expect(dy).toEqual(10)
 })
 
-test('Returns top bounds when zero is left', () => {
+test('maxOffset Returns top bounds when zero is left', () => {
   const tileSize = 10;
   const arr = [
     [0, 1]
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = boundsOfTile(arr, styles, {i: 0, j: 1})
-  expect(topMax).toEqual(0)
+  const {dy} = calcMaxOffset(arr, styles, {i: 0, j: 1})
+  expect(dy).toEqual(0)
 })
 
-test('Returns top bounds when zero is right', () => {
+test('maxOffset Returns top bounds when zero is right', () => {
   const tileSize = 10;
   const arr = [
     [1,0]
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = boundsOfTile(arr, styles, {i: 0, j: 0})
-  expect(topMax).toEqual(0)
+  const {dy} = calcMaxOffset(arr, styles, {i: 0, j: 0})
+  expect(dy).toEqual(0)
 })
 
 
-test('Returns left min bounds when zero is right', () => {
+test('maxOffset Returns left min bounds when zero is right', () => {
   const tileSize = 10;
   const arr = [
     [1,0]
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {leftMin} = boundsOfTile(arr, styles, {i: 0, j: 0})
-  expect(leftMin).toEqual(0)
+  const {dx} = calcMaxOffset(arr, styles, {i: 0, j: 0})
+  expect(dx).toEqual(10)
 })
 
-test('Constrains drag to bounds when dragged left and zero is right', () => {
+test('constrainOffset when empty is to the right', () => {
   const tileSize = 10;
   const arr = [
-    [2,1,0]
+    [1,0]
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const bounds = boundsOfTile(arr, styles, {i: 0, j: 1})
-  console.log(bounds);
 
-  let dragTarget = {
-    left: 8, top: 10
-  };
+  let offset = {dx: 11, dy: 12};
+  let tile = {i: 0, j: 0}
 
+  offset = constrainOffset(offset, tile, arr, styles )
 
-  const {left, top} = constrainDrag(dragTarget, bounds);
+  expect(offset).toEqual({dx: 10, dy: 0})
 
-  expect(left).toEqual(10);
-  expect(top).toEqual(0);
+})
+
+test('constrainOffset on a 9x9', () => {
+  const tileSize = 10;
+  const arr = [
+    [1, 2, 3],
+    [4, 0, 5],
+    [6, 7, 8]
+  ]
+
+  const styles = initialiseStyles(arr, tileSize);
+
+  let tile = {i: 0, j: 1}
+  let maxOffset = calcMaxOffset(arr, styles, tile);
+  expect(maxOffset).toEqual({dx: 0, dy: 10})
+
+  tile = {i: 2, j: 1}
+  maxOffset = calcMaxOffset(arr, styles, tile);
+  expect(maxOffset).toEqual({dx: 0, dy: -10})
+  
+  let offset = {dx: 11, dy: 12};
+  offset = constrainOffset(offset, tile, arr, styles )
+  expect(offset).toEqual({dx: 0, dy: 0})
+
+  offset = {dx: -50, dy: 120};
+  maxOffset = calcMaxOffset(arr, styles, tile);
+  expect(maxOffset).toEqual({dx: 0, dy: -10})
+  offset = constrainOffset(offset, tile, arr, styles )
+  expect(offset).toEqual({dx: 0, dy: 10})
+
 })
