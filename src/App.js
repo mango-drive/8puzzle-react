@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {findZero, neighbours, swap, filterByAllowableDirection, directionOfZero} from './util'
+import {findZero, initialiseStyles, neighbours, swap, boundsOfTile, constrainDrag} from './util'
 import './App.css';
 import './index.css'
 
@@ -84,8 +84,7 @@ class Board extends React.Component {
 
   dragTile = (tile, mouseDelta) => {
       const {i, j} = tile;
-      const dirOfSlot = directionOfZero(this.state.tiles, tile);
-      const {dx, dy} = filterByAllowableDirection(mouseDelta, dirOfSlot)
+      const {dx, dy} = mouseDelta;
 
       // copy the styles state
       const styles = this.state.styles.slice();
@@ -94,6 +93,11 @@ class Board extends React.Component {
 
       // position update
       dragTarget = {...dragTarget, top: dragTarget.top + dy, left: dragTarget.left + dx}
+      const slotIdx = findZero(this.state.tiles);
+      const slotStyle = styles[slotIdx.i][slotIdx.j];
+      dragTarget = constrainDrag(dragTarget, slotStyle)
+      console.log(dragTarget)
+
 
       // update the state
       styles[i][j] = dragTarget;

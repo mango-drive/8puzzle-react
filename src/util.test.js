@@ -4,8 +4,9 @@ import {
   DIRECTIONS,
   findZero,
   directionOfZero,
-  bounds,
+  boundsOfTile,
   initialiseStyles,
+  constrainDrag,
 } from './util'
 
 
@@ -111,7 +112,7 @@ test('Returns top bounds when zero is above', () => {
     [1]
   ]
   const styles = initialiseStyles(arr, tileSize);
-  const {topMin} = bounds(arr, styles, {i: 1, j: 0})
+  const {topMin} = boundsOfTile(arr, styles, {i: 1, j: 0})
   expect(topMin).toEqual(0)
 })
 
@@ -123,7 +124,7 @@ test('Returns top bounds when zero is below', () => {
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = bounds(arr, styles, {i: 1, j: 0})
+  const {topMax} = boundsOfTile(arr, styles, {i: 1, j: 0})
 
   expect(topMax).toEqual(10)
 })
@@ -135,7 +136,7 @@ test('Returns top bounds when zero is left', () => {
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = bounds(arr, styles, {i: 0, j: 1})
+  const {topMax} = boundsOfTile(arr, styles, {i: 0, j: 1})
   expect(topMax).toEqual(0)
 })
 
@@ -146,6 +147,25 @@ test('Returns top bounds when zero is right', () => {
   ]
 
   const styles = initialiseStyles(arr, tileSize);
-  const {topMax} = bounds(arr, styles, {i: 0, j: 0})
+  const {topMax} = boundsOfTile(arr, styles, {i: 0, j: 0})
   expect(topMax).toEqual(0)
+})
+
+test('Constrains drag to bounds when dragged left and zero is right', () => {
+  const tileSize = 10;
+  const arr = [
+    [2,1,0]
+  ]
+
+  const styles = initialiseStyles(arr, tileSize);
+  const bounds = boundsOfTile(arr, styles, {i: 0, j: 0})
+  console.log(bounds);
+
+  let dragTarget = {
+    left: 8, top: 10
+  };
+
+  const {left} = constrainDrag(dragTarget, bounds);
+
+  expect(left).toEqual(10)
 })

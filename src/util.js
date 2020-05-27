@@ -82,7 +82,7 @@ export const directionOfZero = (arr, idx) => {
 }
 
 
-export const bounds = (tiles, styles, tileIdx) => {
+export const boundsOfTile = (tiles, styles, tileIdx) => {
   const tileStyle = styles[tileIdx.i][tileIdx.j]
 
   const slotIdx = findZero(tiles);
@@ -91,9 +91,18 @@ export const bounds = (tiles, styles, tileIdx) => {
   const topMin = Math.min(tileStyle.top, slotStyle.top);
   const topMax = Math.max(tileStyle.top, slotStyle.top);
 
-  const leftMin = Math.min(tileStyle.left, slotStyle.left)
-  const leftMax = Math.max(tileStyle.left, slotStyle.left)
+  const leftMin = Math.min(tileStyle.left, slotStyle.left);
+  const leftMax = Math.max(tileStyle.left, slotStyle.left);
 
   return {topMin, topMax, leftMin, leftMax}
+}
+
+export const constrainDrag = (dragTarget, bounds) => {
+  // dragTarget.top = Math.max(dragTarget.top, bounds.topMin);
+  // dragTarget.top = Math.min(dragTarget.top, bounds.topMax);
+
+  dragTarget.left = Math.min(dragTarget.left, bounds.leftMin);
+
+  return dragTarget;
 }
 
