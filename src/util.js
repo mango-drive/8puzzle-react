@@ -3,7 +3,6 @@ export const findZero = (tiles) => {
     let emptyIdx;
     tiles.forEach((row, i) => {
       row.forEach((tile, j) => {
-        console.log(tile)
         if (tile === 0) {
           emptyIdx = {i, j}
         }

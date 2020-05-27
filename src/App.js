@@ -76,19 +76,16 @@ class Board extends React.Component {
 
   isMoveable = ({i, j}) => {
     const moveableTiles = this.moveableTiles();
-    console.log("moveableTiles: ", moveableTiles)
     return moveableTiles.has(JSON.stringify({i, j}));
   }
 
   handleOnMouseDown(i, j, event) {
     if (!this.state.isMoving && this.isMoveable({i, j})) {
-      console.log("this is moveable!");
       this.setState({
           isMoving: true, 
           selectedTile: {i, j},
           prevMouse: {x: event.pageX, y: event.pageY}
         })
-      console.log(this.state)
     }
   }
 
@@ -103,12 +100,24 @@ class Board extends React.Component {
       // select the tile to drag
       let dragTarget = styles[i][j];
       // position update
-      dragTarget = {...dragTarget, top: dragTarget.top + dy}
 
-      // if selected tile is the empty slot, it can go in direction of all of its neighbours
-      // therefore, have to select the principle one.
-      // otherwise, the tile selected can only move into the direction of its neighbouring
-      // slot
+      // where is the empty slot?
+      // @TODO might be a bug in findZero
+      const {i: si, j: sj} = findZero(this.state.tiles);
+      const allowableDragDirection = {i: i - si, j: sj - j};
+
+      // vertical/horizontal filter
+      // dx * 0 if allowable dir is {1/-1, 0}, else dx remains unchanged 
+      dx = dx * Math.abs(allowableDragDirection[j]); 
+      dy = dy * Math.abs(allowableDragDirection[i]);
+
+      // left/right up/down
+      dx = dx * allowableDragDirection[j] > 0 ? dx : 0;
+      dy = dy * allowableDragDirection[i] > 0 ? dy : 0;
+
+      dragTarget = {...dragTarget, top: dragTarget.top + dy, left: dragTarget.left + dx}
+      console.log(dragTarget)
+
 
       // update the state
       styles[i][j] = dragTarget;
