@@ -129,13 +129,14 @@ class Board extends React.Component {
   }
 
   renderTiles = () => {
-    const {tiles, styles, offset} = this.state;
+    const {tiles, styles,} = this.state;
 
     return tiles.map((row, i) => {
       return row.map((tile, j) => {
 
         const val = tiles[i][j];
         const style = styles[i][j];
+
 
         return (
           <Tile

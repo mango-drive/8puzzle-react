@@ -98,10 +98,11 @@ export const boundsOfTile = (tiles, styles, tileIdx) => {
 }
 
 export const constrainDrag = (dragTarget, bounds) => {
-  // dragTarget.top = Math.max(dragTarget.top, bounds.topMin);
-  // dragTarget.top = Math.min(dragTarget.top, bounds.topMax);
+  dragTarget.top = Math.max(dragTarget.top, bounds.topMin);
+  dragTarget.top = Math.min(dragTarget.top, bounds.topMax);
 
-  dragTarget.left = Math.min(dragTarget.left, bounds.leftMin);
+  dragTarget.left = Math.max(dragTarget.left, bounds.leftMin);
+  dragTarget.left = Math.min(dragTarget.left, bounds.leftMax);
 
   return dragTarget;
 }
