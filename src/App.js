@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {findZero, neighbours, swap} from './util'
+import {findZero, neighbours, swap, filterByAllowableDirection, directionOfZero} from './util'
 import './App.css';
 import './index.css'
 
@@ -43,7 +43,7 @@ class Board extends React.Component {
     ]
 
     let tileSize = 100;
-    let styles = this.initialiseStyles(tiles, tileSize);
+    let styles = initialiseStyles(tiles, tileSize);
     this.state = {
       tiles: tiles,
       styles: styles,
@@ -53,17 +53,6 @@ class Board extends React.Component {
     }
   }
 
-  initialiseStyles = (tiles, tileSize) => {
-    let styles = tiles.map((tileRow, i) => {
-      return tileRow.map((tile, j) => {
-        const top = i * tileSize;
-        const left = j * tileSize;
-        return {top: top, left: left, width: tileSize}
-      })
-    })
-
-    return styles;
-  }
 
   moveableTiles = () => {
     const emptySlot = findZero(this.state.tiles);
@@ -93,31 +82,18 @@ class Board extends React.Component {
     this.setState({isMoving: false})
   }
 
-  dragTile = ({i, j}, {dx, dy}) => {
+  dragTile = (tile, mouseDelta) => {
+      const {i, j} = tile;
+      const dirOfSlot = directionOfZero(this.state.tiles, tile);
+      const {dx, dy} = filterByAllowableDirection(mouseDelta, dirOfSlot)
+
       // copy the styles state
       const styles = this.state.styles.slice();
-
       // select the tile to drag
       let dragTarget = styles[i][j];
+
       // position update
-
-      // where is the empty slot?
-      // @TODO might be a bug in findZero
-      const {i: si, j: sj} = findZero(this.state.tiles);
-      const allowableDragDirection = {i: i - si, j: sj - j};
-
-      // vertical/horizontal filter
-      // dx * 0 if allowable dir is {1/-1, 0}, else dx remains unchanged 
-      dx = dx * Math.abs(allowableDragDirection[j]); 
-      dy = dy * Math.abs(allowableDragDirection[i]);
-
-      // left/right up/down
-      dx = dx * allowableDragDirection[j] > 0 ? dx : 0;
-      dy = dy * allowableDragDirection[i] > 0 ? dy : 0;
-
       dragTarget = {...dragTarget, top: dragTarget.top + dy, left: dragTarget.left + dx}
-      console.log(dragTarget)
-
 
       // update the state
       styles[i][j] = dragTarget;

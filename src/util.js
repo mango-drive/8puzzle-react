@@ -6,6 +6,17 @@ export const DIRECTIONS = {
   RIGHT: {x: -1, y: 0},
 }
 
+export const initialiseStyles = (arr, size) => {
+    let styles = arr.map((tileRow, i) => {
+      return tileRow.map((tile, j) => {
+        const top = i * size;
+        const left = j * size;
+        return {top: top, left: left, width: size}
+      })
+    })
+    return styles;
+}
+
 export const findZero = (arr) => {
     let emptyIdx;
     arr.forEach((row, i) => {
@@ -54,13 +65,9 @@ export const swap = (arr, from, to) => {
     arr[x][y] = tmp;
 }
 
-
 export const filterByAllowableDirection = (delta, allowableDirection) => {
   let {dx, dy} = delta;
   const {x, y} = allowableDirection;
-
-  dx = dx * Math.abs(x);
-  dy = dy * Math.abs(y);
 
   dx = dx * x > 0 ? dx : 0;
   dy = dy * y > 0 ? dy : 0;
@@ -73,3 +80,20 @@ export const directionOfZero = (arr, idx) => {
   const {i, j} = idx;
   return {x: j - jOfZero, y: i - iOfZero};
 }
+
+
+export const bounds = (tiles, styles, tileIdx) => {
+  const tileStyle = styles[tileIdx.i][tileIdx.j]
+
+  const slotIdx = findZero(tiles);
+  const slotStyle = styles[slotIdx.i][slotIdx.j]
+
+  const topMin = Math.min(tileStyle.top, slotStyle.top);
+  const topMax = Math.max(tileStyle.top, slotStyle.top);
+
+  const leftMin = Math.min(tileStyle.left, slotStyle.left)
+  const leftMax = Math.max(tileStyle.left, slotStyle.left)
+
+  return {topMin, topMax, leftMin, leftMax}
+}
+
