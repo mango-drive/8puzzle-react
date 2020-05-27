@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {findEmptySlot} from './util'
+import {findEmptySlot, neighbours} from './util'
 import './App.css';
 import './index.css'
 
@@ -65,7 +65,7 @@ class Board extends React.Component {
 
   moveableTiles = () => {
     const empty = findEmptySlot(this.state.tiles);
-    const neighbours = neighbours(empty);
+    const neighboursArray = neighbours(empty);
     neighbours.push(empty);
     return neighbours;
   }
@@ -130,12 +130,7 @@ class Board extends React.Component {
     tiles[i][j] = tiles[x][y];
     tiles[x][y] = temp;
 
-    let styles = this.state.styles.slice();
-    temp = styles[i][j];
-    styles[i][j] = styles[x][y];
-    styles[x][y] = temp;
-
-    this.setState({ tiles: tiles, styles: styles})
+    this.setState({ tiles: tiles })
   };
 
   renderTiles = () => {
