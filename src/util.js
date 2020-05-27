@@ -1,9 +1,10 @@
 
-export const findEmptySlot = (tiles) => {
+export const findZero = (tiles) => {
     let emptyIdx;
     tiles.forEach((row, i) => {
       row.forEach((tile, j) => {
-        if (tile.id === 0) {
+        console.log(tile)
+        if (tile === 0) {
           emptyIdx = {i, j}
         }
       })
@@ -11,7 +12,7 @@ export const findEmptySlot = (tiles) => {
     return emptyIdx;
 }
 
-export const neighbours = (tiles, {i, j}) => {
+export const neighbours = (arr, {i, j}) => {
     const directions = [
       [1, 0], // up
       [0, 1], // right
@@ -19,19 +20,31 @@ export const neighbours = (tiles, {i, j}) => {
       [0, -1], // up
     ]
 
-    let neighbours = {}
+    let neighbours = new Set()
 
     // iterate over directions and add indices that are in bounds to the set
-    directions.forEach( ({dx, dy}) => {
+    directions.forEach( ([dx, dy]) => {
       const neighbourIdx = {i: i+dx, j: j+dy}
-      if(isValidIdx(tiles.length, neighbourIdx)) {
-        neighbours.push(neighbourIdx)
+      if(isValidIdx(arr.length, neighbourIdx)) {
+        neighbours.add(JSON.stringify(neighbourIdx));
       }
     })
+
+    neighbours.add(JSON.stringify({i, j}));
+    console.log("neighbours", neighbours)
 
     return neighbours;
 }
 
 export const isValidIdx = (n, {i, j}) => {
     return 0 <= i && i <= n && 0 <= j && j <= n;
+}
+
+export const swap = (arr, from, to) => {
+    const {i, j} = from;
+    const {i: x, j: y} = to;
+
+    let tmp = arr[i][j];
+    arr[i][j] = arr[x][y];
+    arr[x][y] = tmp;
 }

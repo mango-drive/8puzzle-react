@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {findEmptySlot, neighbours} from './util'
+import {findZero, neighbours, swap} from './util'
 import './App.css';
 import './index.css'
 
@@ -24,7 +24,6 @@ class Tile extends React.Component {
         className={this.props.className}
         style={this.props.style}
         onMouseDown={this.props.onMouseDown}
-        onMouseEnter={this.props.onMouseEnter}
       >
         <div className='tile-content disable-selection'>{this.props.id}</div>
       </div>
@@ -44,6 +43,17 @@ class Board extends React.Component {
     ]
 
     let tileSize = 100;
+    let styles = this.initialiseStyles(tiles, tileSize);
+    this.state = {
+      tiles: tiles,
+      styles: styles,
+      isMoving: false,
+      selectedTile: null, 
+      prevMouse: {x: 0, y: 0},
+    }
+  }
+
+  initialiseStyles = (tiles, tileSize) => {
     let styles = tiles.map((tileRow, i) => {
       return tileRow.map((tile, j) => {
         const top = i * tileSize;
@@ -52,93 +62,86 @@ class Board extends React.Component {
       })
     })
 
-    console.log(tiles)
-    this.state = {
-      tiles: tiles,
-      styles: styles,
-      isMoving: false,
-      selectedTile: null, 
-      start: {top: 0, left: 0},
-      offset: {top: 0, left: 0}
-    }
+    return styles;
   }
 
   moveableTiles = () => {
-    const empty = findEmptySlot(this.state.tiles);
-    const neighboursArray = neighbours(empty);
-    neighbours.push(empty);
-    return neighbours;
+    const emptySlot = findZero(this.state.tiles);
+    return neighbours(this.state.tiles, emptySlot);
   }
-
 
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
 
-  isMoveable = (i, j) => {
+  isMoveable = ({i, j}) => {
     const moveableTiles = this.moveableTiles();
-    return moveableTiles.has([i, j].toString());
+    console.log("moveableTiles: ", moveableTiles)
+    return moveableTiles.has(JSON.stringify({i, j}));
   }
-
 
   handleOnMouseDown(i, j, event) {
-    
-    if (!this.state.isMoving && this.isMoveable(i, j)) {
-      console.log("mouse down on moveable tile")
-      const startY = event.pageY;
-      const startX = event.pageX;
+    if (!this.state.isMoving && this.isMoveable({i, j})) {
+      console.log("this is moveable!");
       this.setState({
           isMoving: true, 
-          swapOrigin: {i, j},
-          start: {left: startX, top: startY}
+          selectedTile: {i, j},
+          prevMouse: {x: event.pageX, y: event.pageY}
         })
+      console.log(this.state)
     }
-  }
-
-  handleOnMouseEnter(i, j) {
-    // if (this.state.isMoving && this.isMoveable(i, j)) {
-    //   this.swapTiles(this.state.swapOrigin, {i, j});
-    //   this.setState({swapOrigin: {i, j}})
-    // }
   }
 
   handleOnMouseUp = () => {
     this.setState({isMoving: false})
   }
 
+  dragTile = ({i, j}, {dx, dy}) => {
+      // copy the styles state
+      const styles = this.state.styles.slice();
 
+      // select the tile to drag
+      let dragTarget = styles[i][j];
+      // position update
+      dragTarget = {...dragTarget, top: dragTarget.top + dy}
+
+      // update the state
+      styles[i][j] = dragTarget;
+      this.setState({styles: styles})
+  }
+
+  mouseDelta = (event) => {
+    const { prevMouse } = this.state;
+    return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
+  }
 
   handleOnMouseMove = (e) => {
     if (this.state.isMoving) {
-      console.log("mouse moved")
-      const { selectedTile: swapOrigin } = this.state;
-
-      const mouseX = e.pageX;
-      const mouseY = e.pageY;
-
-      const offsetX = mouseX - this.state.start.left;
+      const { selectedTile } = this.state;
+      this.dragTile(selectedTile, this.mouseDelta(e))
+      this.setState({prevMouse: {x: e.pageX, y: e.pageY}})
     }
-
   }
 
   swapTiles = (from, to) => {
-    const {i, j} = from;
-    const {i: x, j: y} = to;
-
     let tiles = this.state.tiles.slice();
-    let temp = tiles[i][j];
-    tiles[i][j] = tiles[x][y];
-    tiles[x][y] = temp;
-
-    this.setState({ tiles: tiles })
+    swap(tiles, from, to);
+    this.setState({ tiles: tiles})
   };
 
+  isSelected = ({i, j}) => {
+    const {selectedTile} = this.state;
+    return i === selectedTile.i && j === selectedTile.j;
+  }
+
   renderTiles = () => {
-    return this.state.tiles.map((row, i) => {
+    const {tiles, styles, offset} = this.state;
+
+    return tiles.map((row, i) => {
       return row.map((tile, j) => {
-        const val = this.state.tiles[i][j];
-        const style = this.state.styles[i][j];
-        console.log("Rendering tile")
+
+        const val = tiles[i][j];
+        const style = styles[i][j];
 
         return (
           <Tile
@@ -171,7 +174,7 @@ class Moveable extends React.Component {
     this.state = {
       style: { top: 0, left: 0 },
       isMoving: false,
-      start: { x: 0, y: 0}
+      prevMouse: { x: 0, y: 0}
     }
   }
 
@@ -187,7 +190,7 @@ class Moveable extends React.Component {
   handleOnMouseMove(event) {
     if (this.state.isMoving) {
       const mouseY = event.pageY;
-      const offsetY = mouseY - this.state.start.y;
+      const offsetY = mouseY - this.state.prevMouse.y;
       const top = this.state.style.top + offsetY;
       this.setState({style: {top: top}, start: {y: mouseY}});
     }
