@@ -30,7 +30,6 @@ export const neighbours = (arr, {i, j}) => {
       }
     })
 
-    neighbours.add(JSON.stringify({i, j}));
     console.log("neighbours", neighbours)
 
     return neighbours;

@@ -105,6 +105,11 @@ class Board extends React.Component {
       // position update
       dragTarget = {...dragTarget, top: dragTarget.top + dy}
 
+      // if selected tile is the empty slot, it can go in direction of all of its neighbours
+      // therefore, have to select the principle one.
+      // otherwise, the tile selected can only move into the direction of its neighbouring
+      // slot
+
       // update the state
       styles[i][j] = dragTarget;
       this.setState({styles: styles})
