@@ -107,3 +107,25 @@ export const constrainDrag = (dragTarget, bounds) => {
   return dragTarget;
 }
 
+export const dragTile = (tile, mouseDelta) => {
+      const {i, j} = tile;
+      const {dx, dy} = mouseDelta;
+
+      // copy the styles state
+      const styles = this.state.styles.slice();
+      // select the tile to drag
+      let dragTarget = styles[i][j];
+
+      // position update
+      dragTarget = {...dragTarget, top: dragTarget.top + dy, left: dragTarget.left + dx}
+      const slotIdx = findZero(this.state.tiles);
+      const slotStyle = styles[slotIdx.i][slotIdx.j];
+      dragTarget = constrainDrag(dragTarget, slotStyle)
+      console.log(dragTarget)
+
+
+      // update the state
+      styles[i][j] = dragTarget;
+      this.setState({styles: styles})
+}
+
