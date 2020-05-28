@@ -25,6 +25,11 @@ code {
   border-radius: 5px;
 }
 
+.board {
+  background-color: grey;
+  width: 1000px;
+}
+
 .blank-tile {
   background-color: grey;
   color: grey;

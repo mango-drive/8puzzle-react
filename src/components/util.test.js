@@ -7,7 +7,7 @@ import {
   calcMaxOffset,
   initialiseStyles,
   constrainDrag,
-  constrainOffset,
+  constrainDrag,
 } from './util'
 
 test('makes vertical delta equal 0 when AD is horizontal', () => {
@@ -174,7 +174,7 @@ test('constrainOffset when empty is to the right', () => {
   let offset = {dx: 11, dy: 12};
   let tile = {i: 0, j: 0}
 
-  offset = constrainOffset(offset, tile, arr, styles )
+  offset = constrainDrag(offset, tile, arr, styles )
 
   expect(offset).toEqual({dx: 10, dy: 0})
 
@@ -199,13 +199,13 @@ test('constrainOffset on a 9x9', () => {
   expect(maxOffset).toEqual({dx: 0, dy: -10})
   
   let offset = {dx: 11, dy: 12};
-  offset = constrainOffset(offset, tile, arr, styles )
+  offset = constrainDrag(offset, tile, arr, styles )
   expect(offset).toEqual({dx: 0, dy: 0})
 
   offset = {dx: -50, dy: 120};
   maxOffset = calcMaxOffset(arr, styles, tile);
   expect(maxOffset).toEqual({dx: 0, dy: -10})
-  offset = constrainOffset(offset, tile, arr, styles )
+  offset = constrainDrag(offset, tile, arr, styles )
   expect(offset).toEqual({dx: 0, dy: 10})
 
 })

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {findZero, neighboursOfZero, initialiseStyles, neighbours, swap, constrainOffset} from './util'
+import {findZero, neighboursOfZero, initialiseStyles, neighbours, swap, constrainDrag, calcMaxOffset} from './util'
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -42,16 +42,17 @@ export class Board extends React.Component {
 
   handleOnMouseDown(i, j, event) {
     if (!this.state.isMoving && this.isMoveable({i, j})) {
-      this.setState({
-          isMoving: true, 
-          selectedTile: {i, j},
-          prevMouse: {x: event.pageX, y: event.pageY},
-          offset: {dx: 0, dy: 0}
+        this.setState({
+            isMoving: true, 
+            selectedTile: {i, j},
+            prevMouse: {x: event.pageX, y: event.pageY},
+            offset: {dx: 0, dy: 0},
         })
     }
   }
 
   handleOnMouseUp = () => {
+    
     this.setState({isMoving: false})
   }
 
@@ -69,9 +70,7 @@ export class Board extends React.Component {
       let {dx, dy} = this.mouseDelta(e);
       offset.dx += dx;
       offset.dy += dy;
-      offset = constrainOffset(offset, selectedTile, tiles, styles);
-
-      
+      offset = constrainDrag(offset, selectedTile, tiles, styles);
 
       const prevM = {x: e.pageX, y: e.pageY}
       this.setState({offset: offset, prevMouse: prevM})
@@ -89,6 +88,7 @@ export class Board extends React.Component {
     return i === selectedTile.i && j === selectedTile.j;
   }
 
+
   renderTiles = () => {
     const {isMoving, tiles, styles, offset} = this.state;
 
@@ -101,6 +101,12 @@ export class Board extends React.Component {
         if (isMoving && this.isSelected({i, j})) {
             const newTop = style.top + offset.dy;
             const newLeft = style.left + offset.dx;
+            style = {...style, top: newTop, left: newLeft}
+        }
+
+        if (isMoving && val === 0 ) {
+            const newTop = style.top - offset.dy;
+            const newLeft = style.left - offset.dx;
             style = {...style, top: newTop, left: newLeft}
         }
 
@@ -122,6 +128,7 @@ export class Board extends React.Component {
   render() {
     return <div 
             className="board"
+            style = {{width: 1000}}
             onMouseMove={(e) => this.handleOnMouseMove(e)}
             >
               {this.renderTiles()}

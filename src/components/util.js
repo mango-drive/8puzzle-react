@@ -98,16 +98,14 @@ export const calcMaxOffset = (arr, styles, idx) => {
 
   const {i, j} = idx;
   const tilePos = styles[i][j];
-  
+
   const dx = slotPos.left - tilePos.left;
   const dy = slotPos.top - tilePos.top;
 
   return {dx, dy}
 }
 
-
-
-export const constrainOffset = (offset, tile, tiles, styles) => {
+export const constrainDrag = (offset, tile, tiles, styles) => {
   const maxOffset = calcMaxOffset(tiles, styles, tile);
 
   if (Math.sign(maxOffset.dx) !== Math.sign(offset.dx)) {
@@ -124,30 +122,3 @@ export const constrainOffset = (offset, tile, tiles, styles) => {
 
   return offset;
 }
-
-export const constrainDrag = (offset, maxOffset) => {
-
-}
-
-export const dragTile = (tile, mouseDelta) => {
-      const {i, j} = tile;
-      const {dx, dy} = mouseDelta;
-
-      // copy the styles state
-      const styles = this.state.styles.slice();
-      // select the tile to drag
-      let dragTarget = styles[i][j];
-
-      // position update
-      dragTarget = {...dragTarget, top: dragTarget.top + dy, left: dragTarget.left + dx}
-      const slotIdx = findZero(this.state.tiles);
-      const slotStyle = styles[slotIdx.i][slotIdx.j];
-      dragTarget = constrainDrag(dragTarget, slotStyle)
-      console.log(dragTarget)
-
-
-      // update the state
-      styles[i][j] = dragTarget;
-      this.setState({styles: styles})
-}
-
