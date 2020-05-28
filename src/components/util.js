@@ -70,22 +70,6 @@ export const swap = (arr, from, to) => {
     arr[x][y] = tmp;
 }
 
-export const filterByAllowableDirection = (delta, allowableDirection) => {
-  let {dx, dy} = delta;
-  const {x, y} = allowableDirection;
-
-  dx = dx * x > 0 ? dx : 0;
-  dy = dy * y > 0 ? dy : 0;
-
-  return {dx: dx, dy: dy};
-}
-
-export const directionOfZero = (arr, idx) => {
-  const {i: iOfZero, j: jOfZero} = findZero(arr);
-  const {i, j} = idx;
-  return {x: j - jOfZero, y: i - iOfZero};
-}
-
 
 export const calcMaxOffset = (arr, styles, idx) => {
 

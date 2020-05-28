@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {findZero, neighboursOfZero, initialiseStyles, neighbours, swap, constrainDrag, calcMaxOffset} from './util'
+import {findZero, neighboursOfZero, initialiseStyles, swap, constrainDrag, calcMaxOffset} from './util'
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -29,8 +29,6 @@ export class Board extends React.Component {
     }
   }
 
-
-
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
@@ -41,21 +39,37 @@ export class Board extends React.Component {
   }
 
   handleOnMouseDown(i, j, event) {
-    if (!this.state.isMoving && this.isMoveable({i, j})) {
-        this.setState({
-            isMoving: true, 
-            selectedTile: {i, j},
-            prevMouse: {x: event.pageX, y: event.pageY},
-            offset: {dx: 0, dy: 0},
-        })
+    const selectedTile = {i, j}
+    if (!this.state.isMoving && this.isMoveable(selectedTile)) {
+      const {tiles, styles} = this.state;
+      const maxOffset = calcMaxOffset(tiles, styles, selectedTile);
+      const emptySlot = findZero(tiles);
+
+      this.setState({
+          isMoving: true, 
+          selectedTile: selectedTile,
+          emptySlot: emptySlot,
+          prevMouse: {x: event.pageX, y: event.pageY},
+          offset: {dx: 0, dy: 0},
+          maxOffset: maxOffset,
+      })
     }
   }
 
   handleOnMouseUp = () => {
-    
-    this.setState({isMoving: false})
-  }
+    const {isMoving} = this.state;
 
+    if (isMoving) {
+      const {selectedTile, emptySlot, offset, maxOffset} = this.state;
+      const p = 0.40;
+
+      const threshold = { dx: maxOffset.dx * p, dy: maxOffset.dy * p };
+      if ( Math.abs(offset.dx) > Math.abs(threshold.dx) || Math.abs(offset.dy) > Math.abs(threshold.dy) ) {
+        this.swapTiles(selectedTile, emptySlot)
+      }
+      this.setState({isMoving: false})
+    }
+  }
 
   mouseDelta = (event) => {
     const { prevMouse } = this.state;
@@ -64,7 +78,7 @@ export class Board extends React.Component {
 
   handleOnMouseMove = (e) => {
     if (this.state.isMoving) {
-      const { selectedTile, prevMouse, styles, tiles} = this.state;
+      const { selectedTile, styles, tiles} = this.state;
       let {offset} = this.state;
 
       let {dx, dy} = this.mouseDelta(e);
