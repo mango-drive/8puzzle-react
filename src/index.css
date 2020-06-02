@@ -26,10 +26,8 @@ code {
 }
 
 .board {
-  background-color: grey;
-  width: 1000px;
+  background-color: black;
 }
-
 .blank-tile {
   background-color: grey;
   color: grey;
