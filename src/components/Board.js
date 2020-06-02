@@ -55,11 +55,6 @@ export class Board extends React.Component {
           if (this.isSelected({i, j})) {
             style = this.applyOffsetToStyle(style, offset);
           }
-          if (val === 0) {
-            const newTop = style.top - offset.dy;
-            const newLeft = style.left - offset.dx;
-            style = {...style, top: newTop, left: newLeft}
-          }
         }
 
         return (
