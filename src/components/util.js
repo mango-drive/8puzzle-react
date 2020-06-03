@@ -1,11 +1,4 @@
 
-export const DIRECTIONS = {
-  UP: {x: 0, y: 1},
-  LEFT: {x: 1, y: 0},
-  DOWN: {x: 0, y: -1},
-  RIGHT: {x: -1, y: 0},
-}
-
 export const initialiseStyles = (arr, size) => {
     let styles = arr.map((tileRow, i) => {
       return tileRow.map((tile, j) => {
@@ -52,9 +45,9 @@ export const neighbours = (arr, {i, j}) => {
     return neighbours;
 }
 
-export const  neighboursOfZero = (arr) => {
-    const emptySlot = findZero(arr);
-    return neighbours(arr, emptySlot);
+export const areNeighbours = (arr, idx1, idx2) => {
+  const neighboursOfIdx1 = neighbours(arr, idx1);
+  return neighboursOfIdx1.has(JSON.stringify(idx2));
 }
 
 export const isValidIdx = (n, {i, j}) => {

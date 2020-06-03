@@ -1,6 +1,13 @@
 
 import React from 'react';
-import { findZero, neighboursOfZero, initialiseStyles, swap, constrainDrag, calcMaxOffset } from './util'
+import { 
+  findZero, 
+  areNeighbours, 
+  initialiseStyles, 
+  swap, 
+  constrainDrag, 
+  calcMaxOffset 
+} from './util'
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -22,10 +29,14 @@ export class Board extends React.Component {
     // An array representing the visual style of all of the tiles
     let styles = initialiseStyles(tiles, tileSize);
 
+    // Coordinates of the empty slot
+    let emptySlot = findZero(tiles); 
+
     this.state = {
       tiles: tiles,
       styles: styles,
       tileSize: tileSize,
+      emptySlot: emptySlot,
       selectedTile: null,       // coordinates of the selected tile
       inDragEvent: false,          // true when user moving a tile
       prevMouse: {x: 0, y: 0},  // x, y coordinates of previous mouse
@@ -71,36 +82,26 @@ export class Board extends React.Component {
       })
     })
   }
-  /*
-  Checks if the tile at coordinate i, j is moveable.
-  A tile is moveable if it is a neighbour to the empty slot
-  */
-  isNeighbourOfEmptySlot = ({i, j}) => {
-    const { tiles } = this.state;
-    const moveableTiles = neighboursOfZero(tiles);
-    return moveableTiles.has(JSON.stringify({i, j}));
-  }
 
   /*
   Handles the start of a tile drag event.
+  Stores the current offset and boundaries of the drag in the state.
   */
   handleOnMouseDown(i, j, event) {
-    const { inDragEvent: isMoving } = this.state;
+    // Tile that was clicked on by the user
     const selectedTile = {i, j}
+    const { inDragEvent, tiles, emptySlot } = this.state;
 
-    
-    if (!isMoving && this.isNeighbourOfEmptySlot(selectedTile)) {
-      const {tiles, styles} = this.state;
+    // Allow neighbours of the empty slot to be dragged
+    if (!inDragEvent && areNeighbours(tiles, emptySlot, selectedTile)) {
+      const { styles } = this.state;
 
-      // TODO we are already finding the empty slot in isNeighbourOf...
-      // this could be refactored
-      const emptySlot = findZero(tiles);
+      // Calculate the boundaries of the drag
       const maxOffset = calcMaxOffset(tiles, styles, selectedTile);
       
       this.setState({
-          isMoving: true, 
+          inDragEvent: true, 
           selectedTile: selectedTile,
-          emptySlot: emptySlot,
           prevMouse: {x: event.pageX, y: event.pageY},
           offset: {dx: 0, dy: 0},
           maxOffset: maxOffset,
@@ -120,12 +121,15 @@ export class Board extends React.Component {
       // Arbitrary threshold percentage of maxOffset
       const p = 0.40;
       // Threshold vector. If the offset created by the drag exceeds this threshold,
-      // the and the empty slot will be swapped.
+      // the selected tile and the empty slot will be swapped.
       const threshold = { dx: maxOffset.dx * p, dy: maxOffset.dy * p };
 
-      // TODO refactor the threshold functionality.
+      // TODO refactor this conditional
       if ( Math.abs(offset.dx) > Math.abs(threshold.dx) || Math.abs(offset.dy) > Math.abs(threshold.dy) ) {
+        // Threshold exceeded
         this.swapTiles(selectedTile, emptySlot)
+        const newEmptySlot = Object.assign({}, selectedTile);
+        this.setState({ selectedTile: null, emptySlot: newEmptySlot });
       }
 
       // Drag event handled.
@@ -133,17 +137,23 @@ export class Board extends React.Component {
     }
   } 
   
+  /*
+  Calculates the vector difference between the current and previous mouse position
+  */
+  // TODO: refactor mouseDelta, we could be using offset relative to original mouse position
   mouseDelta = (event) => {
     const { prevMouse } = this.state;
     return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
   }
 
   handleOnMouseMove = (e) => {
-    if (this.state.inDragEvent) {
+    const { inDragEvent } = this.state;
+    if (inDragEvent) {
       const { selectedTile, styles, tiles} = this.state;
       let {offset} = this.state;
 
       let {dx, dy} = this.mouseDelta(e);
+      // TODO refactor mouseDelta
       offset.dx += dx;
       offset.dy += dy;
       offset = constrainDrag(offset, selectedTile, tiles, styles);
@@ -174,7 +184,6 @@ export class Board extends React.Component {
 
   render() {
     return <div 
-            className="board"
             onMouseMove={(e) => this.handleOnMouseMove(e)}
             >
             {this.renderTiles()}
