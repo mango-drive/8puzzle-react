@@ -40,8 +40,6 @@ export const neighbours = (arr, {i, j}) => {
       }
     })
 
-    console.log("neighbours", neighbours)
-
     return neighbours;
 }
 
@@ -65,20 +63,12 @@ export const swap = (arr, from, to) => {
 
 
 export const calcMaxOffset = (arr, styles, idx) => {
-
   const slotIdx = findZero(arr);
-
-  // TODO if slot is not in neighbours, allow a small maxOffset
-  // and animate a return 
-
   const slotPos = styles[slotIdx.i][slotIdx.j];
-
   const {i, j} = idx;
   const tilePos = styles[i][j];
-
   const dx = slotPos.left - tilePos.left;
   const dy = slotPos.top - tilePos.top;
-
   return {dx, dy}
 }
 

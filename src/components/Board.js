@@ -64,7 +64,7 @@ export class Board extends React.Component {
 
         if (inDragEvent) {
           if (this.isSelected({i, j})) {
-            style = this.applyOffsetToStyle(style, offset);
+            style = this.applyDragOffset(style, offset);
           }
         }
 
@@ -72,8 +72,6 @@ export class Board extends React.Component {
           <Tile
             className={`${val === 0 ? "moveable blank-tile": "moveable tile"}`}
             onMouseDown={(e) => this.handleOnMouseDown(i, j, e)}
-            onMouseEnter={(e) => this.handleOnMouseEnter(i, j)}
-            onMouseUp={(e) => this.handleOnMouseUp(i, j)}
             key={val}
             id={val}
             style = {style}
@@ -109,60 +107,84 @@ export class Board extends React.Component {
     }
   }
 
+
   /*
   Handles the end of a drag event.
   */
   handleOnMouseUp = () => {
     const { inDragEvent } = this.state;
-
-    if (inDragEvent) {
-      const {selectedTile, emptySlot, offset, maxOffset} = this.state;
-
-      // Arbitrary threshold percentage of maxOffset
-      const p = 0.40;
-      // Threshold vector. If the offset created by the drag exceeds this threshold,
-      // the selected tile and the empty slot will be swapped.
-      const threshold = { dx: maxOffset.dx * p, dy: maxOffset.dy * p };
-
-      // TODO refactor this conditional
-      if ( Math.abs(offset.dx) > Math.abs(threshold.dx) || Math.abs(offset.dy) > Math.abs(threshold.dy) ) {
-        // Threshold exceeded
-        this.swapTiles(selectedTile, emptySlot)
-        const newEmptySlot = Object.assign({}, selectedTile);
-        this.setState({ selectedTile: null, emptySlot: newEmptySlot });
-      }
-
-      // Drag event handled.
-      this.setState({inDragEvent: false})
+    if ( inDragEvent ) {
+      this.swapIfThresholdExceeded();
+      this.setState( {inDragEvent: false} )
     }
   } 
-  
-  /*
-  Calculates the vector difference between the current and previous mouse position
-  */
-  // TODO: refactor mouseDelta, we could be using offset relative to original mouse position
+
+  swapIfThresholdExceeded = () => {
+    const { selectedTile, emptySlot, offset, maxOffset } = this.state;
+
+    // Arbitrary threshold percentage of maxOffset
+    const p = 0.40;
+    // Threshold vector. If the offset created by the drag exceeds this threshold,
+    // the selected tile and the empty slot will be swapped.
+    const threshold = { dx: maxOffset.dx * p, dy: maxOffset.dy * p };
+
+    // TODO refactor this conditional
+    if ( Math.abs(offset.dx) > Math.abs(threshold.dx) || Math.abs(offset.dy) > Math.abs(threshold.dy) ) {
+      // Threshold exceeded
+      this.swapTiles(selectedTile, emptySlot)
+      const newEmptySlot = Object.assign({}, selectedTile);
+      this.resetStateAfterDragEnd(newEmptySlot)
+    }
+  }
+
+  resetStateAfterDragEnd = (newEmpty) => {
+    this.setState( {
+      emptySlot: newEmpty,
+      selectedTile: null,
+      maxOffset: null,
+      prevMouse: null,
+      offset: null,
+    })
+  }
+
   mouseDelta = (event) => {
     const { prevMouse } = this.state;
     return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
   }
 
-  handleOnMouseMove = (e) => {
+  /*
+  */
+  handleOnMouseMove = ( e ) => {
     const { inDragEvent } = this.state;
-    if (inDragEvent) {
-      const { selectedTile, styles, tiles} = this.state;
-      let {offset} = this.state;
-
-      let {dx, dy} = this.mouseDelta(e);
-      // TODO refactor mouseDelta
-      offset.dx += dx;
-      offset.dy += dy;
-      offset = constrainDrag(offset, selectedTile, tiles, styles);
-
-      const prevM = {x: e.pageX, y: e.pageY}
-      this.setState({offset: offset, prevMouse: prevM})
+    if ( inDragEvent ) {
+      const newOffset = this.dragTileWithinBounds(e);
+      const prevM = { x: e.pageX, y: e.pageY };
+      this.setState({ offset: newOffset, prevMouse: prevM });
     }
   }
 
+  /*
+
+  */
+  dragTileWithinBounds = ( event ) => {
+      const { selectedTile, styles, tiles } = this.state;
+      let { offset } = this.state;
+      const {dx, dy} = this.mouseDelta(event);
+      // Add the mouse delta to the tile offset
+      offset.dx += dx;
+      offset.dy += dy;
+      // Ensure final offset is within bounds
+      offset = constrainDrag (
+        offset,
+        selectedTile,
+        tiles,
+        styles
+      )
+      return offset
+  }
+
+  /*
+  */
   swapTiles = (from, to) => {
     let tiles = this.state.tiles.slice();
     swap(tiles, from, to);
@@ -170,12 +192,11 @@ export class Board extends React.Component {
   };
 
   isSelected = ({i, j}) => {
-    const {selectedTile} = this.state;
-    return i === selectedTile.i && j === selectedTile.j;
+    const { selectedTile } = this.state;
+    return selectedTile && i === selectedTile.i && j === selectedTile.j;
   }
 
-
-  applyOffsetToStyle(style, offset) {
+  applyDragOffset(style, offset) {
     const newTop = style.top + offset.dy;
     const newLeft = style.left + offset.dx;
     style = { ...style, top: newTop, left: newLeft };
@@ -183,10 +204,10 @@ export class Board extends React.Component {
   }
 
   render() {
-    return <div 
-            onMouseMove={(e) => this.handleOnMouseMove(e)}
-            >
-            {this.renderTiles()}
-            </div>
+    return (
+      <div onMouseMove={(e) => this.handleOnMouseMove(e)}>
+        {this.renderTiles()}
+      </div>
+    )
   }
 }
