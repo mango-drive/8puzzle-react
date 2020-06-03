@@ -53,6 +53,19 @@ export class Board extends React.Component {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
 
+  render() {
+    const { tiles, tileSize } = this.state;
+    const size = tiles.length * tileSize;
+    
+
+    const style = {width: size, height: size}
+    return (
+      <div style={style} className="board" onMouseMove={(e) => this.handleOnMouseMove(e)}>
+        {this.renderTiles()}
+      </div>
+    )
+  }
+
   renderTiles = () => {
     const {inDragEvent, tiles, styles, offset} = this.state;
 
@@ -203,11 +216,4 @@ export class Board extends React.Component {
     return style;
   }
 
-  render() {
-    return (
-      <div onMouseMove={(e) => this.handleOnMouseMove(e)}>
-        {this.renderTiles()}
-      </div>
-    )
-  }
 }
