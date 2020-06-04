@@ -8,6 +8,40 @@ test('hamming distance', () => {
         [2,0]
     ]
 
-    const hammingDistance = hamming(tiles);
-    expect(hammingDistance).toEqual(1);
+    let hammingDistance = hamming(tiles);
+    expect(hammingDistance).toEqual(2);
+
+    tiles = [
+        [3, 2],
+        [1, 0]
+    ]
+
+    hammingDistance = hamming(tiles);
+    expect(hammingDistance).toEqual(2);
+
+    tiles = [
+        [0, 3],
+        [1, 2]
+    ]
+
+    hammingDistance = hamming(tiles);
+    expect(hammingDistance).toEqual(3);
+
+    tiles = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 0]
+    ]
+
+    hammingDistance = hamming(tiles);
+    expect(hammingDistance).toEqual(0);
+
+    tiles = [
+        [1, 3, 2],
+        [4, 5, 6],
+        [7, 8, 0]
+    ]
+
+    hammingDistance = hamming(tiles);
+    expect(hammingDistance).toEqual(2);
 })
