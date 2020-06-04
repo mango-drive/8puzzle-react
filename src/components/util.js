@@ -33,8 +33,8 @@ export const neighboursOfIdx = (arr, {i, j}) => {
     let neighbours = [];
 
     // iterate over directions and add indices that are in bounds to the set
-    directions.forEach( ([dx, dy]) => {
-      const neighbourIdx = {i: i+dx, j: j+dy}
+    directions.forEach( ([di, dj]) => {
+      const neighbourIdx = {i: i+di, j: j+dj}
       if(isValidIdx(arr.length, neighbourIdx)) {
         neighbours.push(neighbourIdx);
       }
@@ -63,6 +63,31 @@ export const swap = (arr, from, to) => {
     let tmp = arr[i][j];
     arr[i][j] = arr[x][y];
     arr[x][y] = tmp;
+}
+
+export const deepCopy = (arr) => {
+  const newArray = arr.map((a) => {
+    return a.slice();
+  })
+  return newArray;
+}
+
+const prettyPrintArrayOfArrays = (arr) => {
+    let output = "";
+    for(const a of arr) {
+        output = output.concat(arrayToString(a));
+        output = output.concat("\n");
+    }
+    console.log(output);
+}
+
+const arrayToString = (arr) => {
+    let output = "";
+    for(const row of arr) {
+        output = output.concat(row.toString());
+        output = output.concat("\n");
+    }
+    return output
 }
 
 

@@ -1,10 +1,11 @@
 import {
     isGoal,
     manhattan,
+    generateNeighborArrays,
     hamming,
 } from './solve'
 
-test('hamming distance', () => {
+test('calculates hamming distance', () => {
     let tiles = [
         [1,3],
         [2,0]
@@ -48,7 +49,7 @@ test('hamming distance', () => {
     expect(hammingDistance).toEqual(2);
 })
 
-test('manhattan distance', () => {
+test('calculates manhattan distance', () => {
     let tiles = [
         [1,3],
         [2,0]
@@ -93,7 +94,7 @@ test('manhattan distance', () => {
 
 })
 
-test('isGoal', () => {
+test('identifies goal board', () => {
     let tiles = [
         [1, 2, 3],
         [4, 5, 6],
@@ -111,4 +112,25 @@ test('isGoal', () => {
 
     rv = isGoal(tiles);
     expect(rv).toEqual(false);
+})
+
+
+test('generates all arrays with element swapped with neighbours', () => {
+    let arr = [
+        [0, 1],
+        [2, 3]
+    ]
+    let rv = generateNeighborArrays(arr, {i: 0, j: 0});
+    let expected = [
+        [
+            [2, 1],
+            [0, 3]
+        ],
+        [
+            [1, 0],
+            [2, 3]
+        ]
+    ]
+    expect(rv).toEqual(expected);
+
 })
