@@ -5,6 +5,7 @@ import {
   findZero,
   calcMaxOffset,
   initialiseStyles,
+  areNeighbours,
   neighboursOfIdx,
   constrainDrag,
 } from './util'
@@ -16,6 +17,45 @@ test('findZero', () => {
   ]
   const zeroIdx = findZero(arr);
   expect(zeroIdx).toEqual({i: 0, j: 1});
+})
+
+test('neighboursOfIdx', () => {
+  let arr = [
+    [1, 0],
+    [2, 3]
+  ]
+  let neighbourArray = neighboursOfIdx(arr, {i: 0, j: 1});
+  let expected = [
+    {i: 1, j: 1},
+    {i: 0, j: 0}
+  ]
+  expect(neighbourArray).toEqual(expected);
+
+  arr = [
+    [1, 2, 3],
+    [4, 0, 5],
+    [6, 7, 8]
+  ]
+  neighbourArray = neighboursOfIdx(arr, {i: 1, j: 1});
+  expected = [
+    {i: 2, j: 1},
+    {i: 1, j: 2},
+    {i: 0, j: 1},
+    {i: 1, j: 0}
+  ]
+  expect(neighbourArray).toEqual(expected);
+
+})
+
+test('areNeighbours', () => {
+  const arr = [
+    [1, 0],
+    [2, 3]
+  ]
+
+  const idx1 = {i: 0, j: 0};
+  const idx2 = {i: 1, j: 0};
+  expect(areNeighbours(arr, idx1, idx2)).toEqual(true);
 })
 
 test('maxOffset Returns top bounds when zero is above', () => {

@@ -24,10 +24,10 @@ export const findZero = (arr) => {
 
 export const neighboursOfIdx = (arr, {i, j}) => {
     const directions = [
-      [1, 0], // up
+      [1, 0], // down
       [0, 1], // right
-      [-1, 0], // down
-      [0, -1], // up
+      [-1, 0], // up
+      [0, -1], // left
     ]
 
     let neighbours = [];
@@ -40,21 +40,20 @@ export const neighboursOfIdx = (arr, {i, j}) => {
       }
     })
 
+
     return neighbours;
 }
 
 export const areNeighbours = (arr, idx1, idx2) => {
-  let neighboursOfIdx1 = neighboursOfIdx(arr, idx1);
-
-  neighboursOfIdx1.forEach(idx, () => {
+  for (const idx of neighboursOfIdx(arr, idx1)) {
     const {i, j} = idx;
-    if (i == idx2.i && j == idx2.j) return true;
-  })
+    if (i === idx2.i && j === idx2.j) return true;
+  }
   return false;
 }
 
 export const isValidIdx = (n, {i, j}) => {
-    return 0 <= i && i <= n && 0 <= j && j <= n;
+    return 0 <= i && i < n && 0 <= j && j < n;
 }
 
 export const swap = (arr, from, to) => {
