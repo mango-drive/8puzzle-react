@@ -1,13 +1,15 @@
 
 import React from 'react';
 import { 
-  findZero, 
   areNeighbours, 
+  calcMaxOffset,
+  constrainDrag, 
+  deepCopy,
+  findZero, 
   initialiseStyles, 
   swap, 
-  constrainDrag, 
-  calcMaxOffset 
 } from './util'
+
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -193,9 +195,10 @@ export class Board extends React.Component {
   /*
   */
   swapTiles = (from, to) => {
-    let tiles = this.state.tiles.slice();
-    swap(tiles, from, to);
-    this.setState({ tiles: tiles})
+    const { tiles } = this.state;
+    let newTiles = deepCopy(tiles);
+    swap(newTiles, from, to);
+    this.setState({ tiles: newTiles})
   };
 
   isSelected = ({i, j}) => {
