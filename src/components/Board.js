@@ -42,7 +42,7 @@ export class Board extends React.Component {
 
   /*
   Give the board the ability to listen to DOM onmouseup events that
-  occur on the entire document. 
+  occur on the entire document. onMouseUp events are used to end a tile drag gesture.
   */
   componentDidMount() {
     document.addEventListener("mouseup", this.handleOnMouseUp);
@@ -69,6 +69,8 @@ export class Board extends React.Component {
         let tileStyle = styles[i][j];
 
         if (inDragEvent) {
+          // Render the selected tile with a bounded offset calculated
+          // based on user's mouse position
           if (this.isSelected({i, j})) {
             tileStyle = this.applyDragOffset(tileStyle, offset);
           }
