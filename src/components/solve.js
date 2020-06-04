@@ -1,7 +1,7 @@
 
 export const hamming = (arr) => {
     let count = 0;
-    let n = arr.length;
+    const n = arr.length;
 
     for(let i = 0; i < n; ++i) {
         for(let j=0; j < n; ++j) {
@@ -14,3 +14,21 @@ export const hamming = (arr) => {
     }
     return count;
 } 
+
+export const manhattan = (arr)=> {
+    let manhattan = 0;
+    const n = arr.length;
+
+    for (let i = 0; i < n; ++i) {
+        for(let j=0; j < n; ++j) {
+            const val = arr[i][j];
+            if (val != 0) {
+                const goal_i = Math.floor((val - 1) / n);
+                const goal_j = (val - 1) % n;
+                manhattan += Math.abs(goal_i - i) + Math.abs(goal_j - j);
+            }
+        }
+    }
+
+    return manhattan;
+}
