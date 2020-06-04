@@ -22,7 +22,7 @@ export const findZero = (arr) => {
     return emptyIdx;
 }
 
-export const neighbours = (arr, {i, j}) => {
+export const neighboursOfIdx = (arr, {i, j}) => {
     const directions = [
       [1, 0], // up
       [0, 1], // right
@@ -30,13 +30,13 @@ export const neighbours = (arr, {i, j}) => {
       [0, -1], // up
     ]
 
-    let neighbours = new Set()
+    let neighbours = [];
 
     // iterate over directions and add indices that are in bounds to the set
     directions.forEach( ([dx, dy]) => {
       const neighbourIdx = {i: i+dx, j: j+dy}
       if(isValidIdx(arr.length, neighbourIdx)) {
-        neighbours.add(JSON.stringify(neighbourIdx));
+        neighbours.push(neighbourIdx);
       }
     })
 
@@ -44,8 +44,13 @@ export const neighbours = (arr, {i, j}) => {
 }
 
 export const areNeighbours = (arr, idx1, idx2) => {
-  const neighboursOfIdx1 = neighbours(arr, idx1);
-  return neighboursOfIdx1.has(JSON.stringify(idx2));
+  let neighboursOfIdx1 = neighboursOfIdx(arr, idx1);
+
+  neighboursOfIdx1.forEach(idx, () => {
+    const {i, j} = idx;
+    if (i == idx2.i && j == idx2.j) return true;
+  })
+  return false;
 }
 
 export const isValidIdx = (n, {i, j}) => {

@@ -2,7 +2,7 @@ import {
     isGoal,
     manhattan,
     hamming,
-} from './solve.js'
+} from './solve'
 
 test('hamming distance', () => {
     let tiles = [

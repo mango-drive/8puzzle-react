@@ -1,3 +1,7 @@
+import {
+    swap, 
+    neighboursOfIdx,
+} from './util'
 
 export const hamming = (arr) => {
     let count = 0;
@@ -15,7 +19,7 @@ export const hamming = (arr) => {
     return count;
 } 
 
-export const manhattan = (arr)=> {
+export const manhattan = (arr) => {
     let manhattan = 0;
     const n = arr.length;
 
@@ -35,4 +39,10 @@ export const manhattan = (arr)=> {
 
 export const isGoal = (arr) => {
     return hamming(arr) == 0;
+}
+
+export const generateNeighborArrays = (arr, idx) => {
+    const idxNeighbours = neighboursOfIdx(arr, idx);
+    const neighborArrays = [];
+
 }
