@@ -16,12 +16,7 @@ export class Board extends React.Component {
   constructor(props) {
     super(props);
 
-    // 2D array of tile values
-    let tiles = [
-        [1, 2, 3],
-        [4, 0, 5],
-        [6, 7, 8],
-    ]
+    const { tiles } = this.props;
 
     // size of tiles in pixels
     let tileSize = 100;
@@ -38,7 +33,7 @@ export class Board extends React.Component {
       tileSize: tileSize,
       emptySlot: emptySlot,
       selectedTile: null,       // coordinates of the selected tile
-      inDragEvent: false,          // true when user moving a tile
+      inDragEvent: false,       // true when user moving a tile
       prevMouse: {x: 0, y: 0},  // x, y coordinates of previous mouse
       offset: {dx: 0, dy: 0},   // offset to be applied to the selected style
     } 
@@ -56,12 +51,10 @@ export class Board extends React.Component {
   render() {
     const { tiles, tileSize } = this.state;
     const size = tiles.length * tileSize;
-    
-
     const style = {width: size, height: size}
     return (
       <div style={style} className="board" onMouseMove={(e) => this.handleOnMouseMove(e)}>
-        {this.renderTiles()}
+        { this.renderTiles() }
       </div>
     )
   }
@@ -72,22 +65,22 @@ export class Board extends React.Component {
     return tiles.map((row, i) => {
       return row.map((tile, j) => {
 
-        const val = tiles[i][j];
-        let style = styles[i][j];
+        const tileVal = tiles[i][j];
+        let tileStyle = styles[i][j];
 
         if (inDragEvent) {
           if (this.isSelected({i, j})) {
-            style = this.applyDragOffset(style, offset);
+            tileStyle = this.applyDragOffset(tileStyle, offset);
           }
         }
 
         return (
           <Tile
-            className={`${val === 0 ? "moveable blank-tile": "moveable tile"}`}
+            className={`${tileVal === 0 ? "moveable blank-tile": "moveable tile"}`}
             onMouseDown={(e) => this.handleOnMouseDown(i, j, e)}
-            key={val}
-            id={val}
-            style = {style}
+            key={tileVal}
+            id={tileVal}
+            style = {tileStyle}
           />
         )
       })
@@ -120,7 +113,6 @@ export class Board extends React.Component {
     }
   }
 
-
   /*
   Handles the end of a drag event.
   */
@@ -146,7 +138,7 @@ export class Board extends React.Component {
       // Threshold exceeded
       this.swapTiles(selectedTile, emptySlot)
       const newEmptySlot = Object.assign({}, selectedTile);
-      this.resetStateAfterDragEnd(newEmptySlot)
+      this.resetStateAfterDragEnd(newEmptySlot);
     }
   }
 
@@ -215,5 +207,4 @@ export class Board extends React.Component {
     style = { ...style, top: newTop, left: newLeft };
     return style;
   }
-
 }
