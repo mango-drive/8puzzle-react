@@ -1,4 +1,5 @@
 import {
+    isGoal,
     manhattan,
     hamming,
 } from './solve.js'
@@ -90,4 +91,24 @@ test('manhattan distance', () => {
     manhattanDistance = manhattan(tiles);
     expect(manhattanDistance).toEqual(2);
 
+})
+
+test('isGoal', () => {
+    let tiles = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 0]
+    ]
+
+    let rv = isGoal(tiles);
+    expect(rv).toEqual(true);
+
+    tiles = [
+        [1, 3, 2],
+        [4, 5, 6],
+        [7, 8, 0]
+    ]
+
+    rv = isGoal(tiles);
+    expect(rv).toEqual(false);
 })

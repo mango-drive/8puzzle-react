@@ -32,3 +32,7 @@ export const manhattan = (arr)=> {
 
     return manhattan;
 }
+
+export const isGoal = (arr) => {
+    return hamming(arr) == 0;
+}
