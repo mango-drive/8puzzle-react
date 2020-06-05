@@ -13,9 +13,13 @@ export default class PriorityQueue {
         return this._data;
     }
 
+    isEmpty() {
+        return this._data.length === 0;
+    }
+
     heapify() {
         if(this.size() > 0) {
-            for (let i = 1; i < this._data.length; ++i) {
+            for (let i = 1; i < this.size(); ++i) {
                 this.bubbleUp(i);
             }
         }
@@ -23,14 +27,51 @@ export default class PriorityQueue {
 
     bubbleUp(pos) {
         while(pos > 0) {
-            let parent = Math.floor(pos/2);
+            let parent = Math.floor((pos-1)/2);
             // if the child is larger than the parent, we are done
             if (this.comparator(this._data[pos], this._data[parent]) > 0)
                 break;
             
             // otherwise, swap child and parent to satisfy minHeap property
             this.swap(pos, parent);
+            pos = parent;
         }
+    }
+
+    insert(value) {
+        const i = this.size();
+        this._data.push(value);
+        this.bubbleUp(i);
+    }
+
+    bubbleDown(pos) {
+        const firstLeaf = Math.floor(this.size() / 2)
+        while(pos < firstLeaf) {
+            // left child
+            let left = pos * 2 + 1;
+            let children = [left, left+1]
+            let swapped = false;
+            for (const cPos of children) {
+                if (this.comparator(this._data[pos], this._data[cPos]) > 0) {
+                    this.swap(pos, cPos)
+                    pos = cPos;
+                    swapped = true;
+                    break;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    extract() {
+        if(this.isEmpty()) return null;
+        const first = 0;
+        const last = this.size() - 1;
+        this.swap(first, last);
+        // the previous root is now at the back of the array
+        const value = this._data.pop();
+        this.bubbleDown(first);
+        return value;
     }
 
     swap(i, j) {
