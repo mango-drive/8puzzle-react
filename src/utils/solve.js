@@ -44,7 +44,6 @@ export const isGoal = (arr) => {
 
 export const generateNeighborArrays = (arr, idx) => {
     const neighborArrays = [];
-    const neighbours = neighboursOfIdx(arr, idx);
     for(const idx2 of neighboursOfIdx(arr, idx)) {
         const neigborArray = deepCopy(arr);
         swap(neigborArray, idx, idx2);

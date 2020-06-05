@@ -90,7 +90,6 @@ const arrayToString = (arr) => {
     return output
 }
 
-
 export const calcMaxOffset = (arr, styles, idx) => {
   const slotIdx = findZero(arr);
   const slotPos = styles[slotIdx.i][slotIdx.j];

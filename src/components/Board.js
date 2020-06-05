@@ -8,7 +8,7 @@ import {
   findZero, 
   initialiseStyles, 
   swap, 
-} from './util'
+} from '../utils/util'
 
 import {Tile} from './Tile'
 import '../App.css';
@@ -179,6 +179,9 @@ export class Board extends React.Component {
       const { selectedTile, styles, tiles } = this.state;
       let { offset } = this.state;
       const {dx, dy} = this.mouseDelta(event);
+      // TODO refactor this so that the offset update is all done
+      // in constrainDrag, so that constrainDrag's signature looks like:
+      // constrainDrag(offset, mouseDelta);
       // Add the mouse delta to the tile offset
       offset.dx += dx;
       offset.dy += dy;
