@@ -47,9 +47,12 @@ export default class PriorityQueue {
     bubbleDown(pos) {
         const firstLeaf = Math.floor(this.size() / 2)
         while(pos < firstLeaf) {
-            // left child
-            let left = pos * 2 + 1;
-            let children = [left, left+1]
+            const left = pos * 2 + 1;
+            let children = [left];
+
+            const right = left + 1;
+            if (right < this.size()) children.push(right);
+
             let swapped = false;
             for (const cPos of children) {
                 if (this.comparator(this._data[pos], this._data[cPos]) > 0) {

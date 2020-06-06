@@ -3,6 +3,8 @@ import {
     manhattan,
     generateNeighborArrays,
     hamming,
+    SolvableBoard,
+    solve,
 } from './solve'
 
 test('calculates hamming distance', () => {
@@ -57,6 +59,10 @@ test('calculates manhattan distance', () => {
 
     let manhattanDistance = manhattan(tiles);
     expect(manhattanDistance).toEqual(4);
+
+    tiles = [
+        [0, 1]
+    ]
 
     tiles = [
         [3, 2],
@@ -133,4 +139,27 @@ test('generates all arrays with element swapped with neighbours', () => {
     ]
     expect(rv).toEqual(expected);
 
+})
+
+test('solves the simplest board', () => {
+    let tiles = [
+        [1, 2],
+        [0, 3],
+    ];
+
+    const board = new SolvableBoard(tiles);
+    const solution = solve(board);
+    console.log(solution);
+})
+
+test('solves board', () => {
+    let tiles = [
+        [1, 2, 3],
+        [4, 0, 5],
+        [6, 7, 8]
+    ]
+
+    const board = new SolvableBoard(tiles);
+    const solution = solve(board);
+    console.log(solution[solution.length - 1].board.tiles)
 })
