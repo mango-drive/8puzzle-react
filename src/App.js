@@ -1,9 +1,9 @@
 import React from 'react';
-import {SolvableBoard} from './components/SolvableBoard';
+import {AnimatedBoard} from './components/AnimatedBoard';
 
 function App() {
   return (
-    <SolvableBoard/>
+    <AnimatedBoard/>
   );
 }
 

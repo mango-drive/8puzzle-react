@@ -1,5 +1,5 @@
 export default class PriorityQueue {
-    constructor(data = [], comparator = defaultComparator) {
+    constructor(data = [], comparator) {
         this._data = data;
         this.comparator = comparator;
         this.heapify();

@@ -3,7 +3,7 @@ import {
     manhattan,
     generateNeighborArrays,
     hamming,
-    SolvableBoard,
+    Board,
     solve,
 } from './solve'
 
@@ -147,7 +147,7 @@ test('solves the simplest board', () => {
         [0, 3],
     ];
 
-    const board = new SolvableBoard(tiles);
+    const board = new Board(tiles);
     const solution = solve(board);
     console.log(solution);
 })
@@ -159,7 +159,7 @@ test('solves board', () => {
         [6, 7, 8]
     ]
 
-    const board = new SolvableBoard(tiles);
+    const board = new Board(tiles);
     const solution = solve(board);
     console.log(solution[solution.length - 1].board.tiles)
 })

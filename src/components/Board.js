@@ -19,6 +19,7 @@ export class Board extends React.Component {
     super(props);
 
     const { tiles } = this.props;
+    console.log("Board received tiles: ", tiles)
 
     // size of tiles in pixels
     let tileSize = 100;
@@ -62,7 +63,8 @@ export class Board extends React.Component {
   }
 
   renderTiles = () => {
-    const {inDragEvent, tiles, styles, offset} = this.state;
+    const {inDragEvent, styles, offset} = this.state;
+    const { tiles } = this.props;
 
     return tiles.map((row, i) => {
       return row.map((tile, j) => {

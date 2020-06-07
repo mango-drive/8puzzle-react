@@ -14,9 +14,9 @@ export const hamming = (arr) => {
     for(let i = 0; i < n; ++i) {
         for(let j=0; j < n; ++j) {
             const val = arr[i][j];
-            if (val != 0) {
+            if (val !== 0) {
                 const pos = i*n + j+1;
-                if (val != pos)
+                if (val !== pos)
                     count++;
             }
         }
@@ -31,7 +31,7 @@ export const manhattan = (arr) => {
     for (let i = 0; i < n; ++i) {
         for(let j=0; j < n; ++j) {
             const val = arr[i][j];
-            if (val != 0) {
+            if (val !== 0) {
                 const goal_i = Math.floor((val - 1) / n);
                 const goal_j = (val - 1) % n;
                 manhattan += Math.abs(goal_i - i) + Math.abs(goal_j - j);
@@ -43,7 +43,7 @@ export const manhattan = (arr) => {
 }
 
 export const isGoal = (arr) => {
-    return hamming(arr) == 0;
+    return hamming(arr) === 0;
 }
 
 export const generateNeighborArrays = (arr, idx) => {
@@ -56,7 +56,7 @@ export const generateNeighborArrays = (arr, idx) => {
     return neighborArrays;
 }
 
-export class SolvableBoard {
+export class Board {
     constructor(tiles) {
         this._tiles = tiles;
         this._emptySlot = findZero(this._tiles);
@@ -72,7 +72,7 @@ export class SolvableBoard {
 
     get neighbours() {
         const neighbourTiles = generateNeighborArrays(this._tiles, this._emptySlot);
-        const neighbourBoards = neighbourTiles.map((tiles) => new SolvableBoard(tiles));
+        const neighbourBoards = neighbourTiles.map((tiles) => new Board(tiles));
         return neighbourBoards;
     }
 
@@ -89,10 +89,10 @@ export class SolvableBoard {
     }
 
     isEqual(to) {
-        if (this.dimension != to.dimension) return false;
+        if (this.dimension !== to.dimension) return false;
         for (let i = 0; i < this.dimension; ++i) {
             for(let j = 0; j < this.dimension; ++j) {
-                if ( this._tiles[i][j] != to.tiles[i][j])
+                if ( this._tiles[i][j] !== to.tiles[i][j])
                     return false;
             }
         }
@@ -129,9 +129,10 @@ const priorityCompare = (node1, node2) => {
 }
 
 
-export const solve = (board) => {
+export const solve = (tiles) => {
     let solutionNode = null;
-    const initialNode = new SearchNode(board, 0, null)
+    const initialBoard = new Board(tiles)
+    const initialNode = new SearchNode(initialBoard, 0, null)
     const minPQ = new PriorityQueue([initialNode], priorityCompare);
 
     while(true) {
@@ -147,7 +148,7 @@ export const solve = (board) => {
         const prevBoard = currNode.prev ? currNode.prev.board : null;
 
         for (const board of currBoard.neighbours) {
-            if (prevBoard != null && board.isEqual(prevBoard)) {
+            if (prevBoard !== null && board.isEqual(prevBoard)) {
                 continue;
             }
             minPQ.insert(new SearchNode(board, moves + 1, currNode))
@@ -156,7 +157,7 @@ export const solve = (board) => {
 
     let currNode = solutionNode;
     const solution = [];
-    while(currNode != null) {
+    while(currNode !== null) {
         solution.unshift(currNode);
         currNode = currNode.prev;
     }
