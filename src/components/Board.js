@@ -10,6 +10,8 @@ import {
   swap, 
 } from '../utils/util'
 
+import { solve } from '../utils/solve'
+
 import {Tile} from './Tile'
 import '../App.css';
 import '../index.css'
@@ -18,8 +20,13 @@ export class Board extends React.Component {
   constructor(props) {
     super(props);
 
-    const { tiles } = this.props;
-    console.log("Board received tiles: ", tiles)
+
+    // 2D array of tile values
+    let tiles = [
+        [1, 0, 3],
+        [4, 5, 7],
+        [6, 2, 8],
+    ]
 
     // size of tiles in pixels
     let tileSize = 100;
@@ -51,20 +58,43 @@ export class Board extends React.Component {
     document.addEventListener("mouseup", this.handleOnMouseUp);
   }
 
+  handleOnClick() {
+      const { tiles } = this.state;
+      const solution = solve(tiles);
+      let i = 0;
+      for (const state of solution) {
+          const { tiles } = state.board;
+          this.renderMove(tiles, i);
+          i++;
+      }
+  }
+
+  renderMove(tiles, i) {
+      setTimeout(() => {
+          this.setState({tiles: tiles});
+      }, 200 * i);
+  }
+
   render() {
     const { tiles, tileSize } = this.state;
     const size = tiles.length * tileSize;
     const style = {width: size, height: size}
     return (
-      <div style={style} className="board" onMouseMove={(e) => this.handleOnMouseMove(e)}>
-        { this.renderTiles() }
+      <div>
+        <div style={style} className="board" onMouseMove={(e) => this.handleOnMouseMove(e)}>
+          { this.renderTiles() }
+        </div>
+        <button 
+            style={{ width: 100, height: 100, fontSize: 24}}
+            onClick = { () => this.handleOnClick()}>
+            Solve
+        </button>
       </div>
     )
   }
 
   renderTiles = () => {
-    const {inDragEvent, styles, offset} = this.state;
-    const { tiles } = this.props;
+    const {inDragEvent, tiles, styles, offset} = this.state;
 
     return tiles.map((row, i) => {
       return row.map((tile, j) => {

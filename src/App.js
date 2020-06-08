@@ -1,9 +1,9 @@
 import React from 'react';
-import {AnimatedBoard} from './components/AnimatedBoard';
+import {Board} from './components/Board';
 
 function App() {
   return (
-    <AnimatedBoard/>
+    <Board/>
   );
 }
 
