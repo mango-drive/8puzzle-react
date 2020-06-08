@@ -163,3 +163,4 @@ export const solve = (tiles) => {
     }
     return solution;
 }
+

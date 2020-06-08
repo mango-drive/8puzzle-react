@@ -123,6 +123,23 @@ export class Board extends React.Component {
     })
   }
 
+  handleOnClick() {
+      const { tiles } = this.state;
+      const solution = solve(tiles);
+      let i = 0;
+      for (const state of solution) {
+          const { tiles } = state.board;
+          this.renderMove(tiles, i);
+          i++;
+      }
+  }
+
+  renderMove(tiles, i) {
+      setTimeout(() => {
+          this.setState({tiles: tiles});
+      }, 200 * i);
+  }
+
   /*
   Handles the start of a tile drag event.
   Stores the current offset and boundaries of the drag in the state.
@@ -139,6 +156,7 @@ export class Board extends React.Component {
       // Calculate the boundaries of the drag
       const maxOffset = calcMaxOffset(tiles, styles, selectedTile);
       
+      // Store the initial drag conditions in the state
       this.setState({
           inDragEvent: true, 
           selectedTile: selectedTile,
@@ -147,6 +165,43 @@ export class Board extends React.Component {
           maxOffset: maxOffset,
       })
     }
+  }
+
+
+  /*
+  */
+  handleOnMouseMove = ( e ) => {
+    const { inDragEvent } = this.state;
+    if ( inDragEvent ) {
+      const newOffset = this.dragTileWithinBounds(e);
+      const prevM = { x: e.pageX, y: e.pageY };
+      this.setState({ offset: newOffset, prevMouse: prevM });
+    }
+  }
+
+  mouseDelta = (event) => {
+    const { prevMouse } = this.state;
+    return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
+  }
+
+  dragTileWithinBounds = ( event ) => {
+      const { selectedTile, styles, tiles } = this.state;
+      let { offset } = this.state;
+      const {dx, dy} = this.mouseDelta(event);
+      // TODO refactor this so that the offset update is all done
+      // in constrainDrag, so that constrainDrag's signature looks like:
+      // constrainDrag(offset, mouseDelta);
+      // Add the mouse delta to the tile offset
+      offset.dx += dx;
+      offset.dy += dy;
+      // Ensure final offset is within bounds
+      offset = constrainDrag (
+        offset,
+        selectedTile,
+        tiles,
+        styles
+      )
+      return offset
   }
 
   /*
@@ -188,44 +243,6 @@ export class Board extends React.Component {
     })
   }
 
-  mouseDelta = (event) => {
-    const { prevMouse } = this.state;
-    return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
-  }
-
-  /*
-  */
-  handleOnMouseMove = ( e ) => {
-    const { inDragEvent } = this.state;
-    if ( inDragEvent ) {
-      const newOffset = this.dragTileWithinBounds(e);
-      const prevM = { x: e.pageX, y: e.pageY };
-      this.setState({ offset: newOffset, prevMouse: prevM });
-    }
-  }
-
-  /*
-
-  */
-  dragTileWithinBounds = ( event ) => {
-      const { selectedTile, styles, tiles } = this.state;
-      let { offset } = this.state;
-      const {dx, dy} = this.mouseDelta(event);
-      // TODO refactor this so that the offset update is all done
-      // in constrainDrag, so that constrainDrag's signature looks like:
-      // constrainDrag(offset, mouseDelta);
-      // Add the mouse delta to the tile offset
-      offset.dx += dx;
-      offset.dy += dy;
-      // Ensure final offset is within bounds
-      offset = constrainDrag (
-        offset,
-        selectedTile,
-        tiles,
-        styles
-      )
-      return offset
-  }
 
   /*
   */
