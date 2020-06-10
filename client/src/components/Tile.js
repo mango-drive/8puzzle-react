@@ -53,13 +53,18 @@ function withDrag(Component) {
       super(props);
 
       this.state = {
+        position: this.props.defaultPosition,
         inDrag: false,
         prevMouse: {x: 0, y: 0},
         offset: {dx: 0, dy: 0}
       }
 
-      this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
       
+    }
+
+    mouseDelta = (event) => {
+      const { prevMouse } = this.state;
+      return { dx: event.pageX - prevMouse.x, dy: event.pageY - prevMouse.y};
     }
 
     handleOnMouseDown(e) {
@@ -71,7 +76,21 @@ function withDrag(Component) {
     }
 
     handleOnMouseMove(e) {
-      console.log("On Mouse Move")
+      if (this.state.inDrag) {
+        console.log("dragging")
+        let { offset, position } = this.state;
+        const {dx, dy} = this.mouseDelta(e);
+
+        position.top += dy;
+        position.left += dx;
+
+        
+
+        this.setState({
+          position: position,
+          prevMouse: {x: e.pageX, y: e.pageY}
+        })
+      }
     }
 
     render() {
@@ -79,7 +98,7 @@ function withDrag(Component) {
         <Component 
           onMouseDown={(e) => this.handleOnMouseDown(e)} 
           onMouseMove={(e) => this.handleOnMouseMove(e)}
-          position={this.props.defaultPosition} 
+          position={this.state.position} 
           {...this.props} 
         />
       )
