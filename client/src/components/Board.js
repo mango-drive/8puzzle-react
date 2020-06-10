@@ -20,7 +20,6 @@ export class Board extends React.Component {
   constructor(props) {
     super(props);
 
-
     // 2D array of tile values
     let tiles = [
         [1, 0, 3],
@@ -86,8 +85,8 @@ export class Board extends React.Component {
         </div>
         <button 
             style={{ width: 100, height: 100, fontSize: 24}}
-            onClick = { () => this.handleOnClick()}>
-            Solve
+            onClick = { () => this.handleOnClick()}
+        >Solve
         </button>
       </div>
     )
@@ -121,23 +120,6 @@ export class Board extends React.Component {
         )
       })
     })
-  }
-
-  handleOnClick() {
-      const { tiles } = this.state;
-      const solution = solve(tiles);
-      let i = 0;
-      for (const state of solution) {
-          const { tiles } = state.board;
-          this.renderMove(tiles, i);
-          i++;
-      }
-  }
-
-  renderMove(tiles, i) {
-      setTimeout(() => {
-          this.setState({tiles: tiles});
-      }, 200 * i);
   }
 
   /*

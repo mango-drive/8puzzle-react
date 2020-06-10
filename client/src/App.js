@@ -1,9 +1,10 @@
 import React from 'react';
-import {Board} from './components/Board';
+import {Board2} from './components/Tile'
 
 function App() {
+  const initial = [[1, 0, 2]];
   return (
-    <Board/>
+    <Board2 initialState={initial}/>
   );
 }
 
