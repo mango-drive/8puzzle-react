@@ -37,8 +37,8 @@ class Tile extends React.Component {
 
 
   render() {
-    const {value, position, onMouseMove, onMouseDown} = this.props;
-    const optionalOnMouseDown = {onMouseMove: onMouseMove, onMouseDown: onMouseDown}
+    const {value, position, onMouseMove, onMouseDown, onMouseUp} = this.props;
+    const optionalOnMouseDown = {onMouseMove: onMouseMove, onMouseDown: onMouseDown, onMouseUp: onMouseUp}
     return (
       <div style={{...baseStyles.tile, ...position}} {...optionalOnMouseDown}>{value}</div>
     )
@@ -56,10 +56,8 @@ function withDrag(Component) {
         position: this.props.defaultPosition,
         inDrag: false,
         prevMouse: {x: 0, y: 0},
-        offset: {dx: 0, dy: 0}
+        offset: {dx: 0, dy: 0},
       }
-
-      
     }
 
     mouseDelta = (event) => {
@@ -77,13 +75,19 @@ function withDrag(Component) {
 
     handleOnMouseMove(e) {
       if (this.state.inDrag) {
-        console.log("dragging")
         let { offset, position } = this.state;
         const {dx, dy} = this.mouseDelta(e);
 
         position.top += dy;
         position.left += dx;
 
+        const { width, height} = this.props.style;
+        const { bounds } = this.props;
+
+        position.top = Math.max(bounds.top, position.top)
+        position.left = Math.max(bounds.left, position.left);
+        position.top = Math.min(bounds.bottom, position.top);
+        position.left = Math.min(bounds.right, position.left);
         
 
         this.setState({
@@ -93,13 +97,18 @@ function withDrag(Component) {
       }
     }
 
+    handleOnMouseUp() {
+      this.setState({inDrag: false})
+    }
+
     render() {
       return (
         <Component 
+          {...this.props} 
           onMouseDown={(e) => this.handleOnMouseDown(e)} 
           onMouseMove={(e) => this.handleOnMouseMove(e)}
+          onMouseUp={() => this.handleOnMouseUp()}
           position={this.state.position} 
-          {...this.props} 
         />
       )
     }
@@ -131,13 +140,13 @@ export const Board2 = ({ initialState }) => {
           console.log("Rendering tile with drag", tile.value)
           const bounds = {
             top: 0,
-            bottom: 1000,
+            bottom: 150,
             left: 0,
-            right: 1000
+            right: 150
           }
 
           return (
-            <TileWithDrag key={tile.value} value={tile.value} defaultPosition={tile.uiPos} bounds={bounds}/>
+            <TileWithDrag key={tile.value} value={tile.value} style = {baseStyles.tile} defaultPosition={tile.uiPos} bounds={bounds}/>
           )
         } else {
           return <Tile key={tile.value} value={tile.value} position={tile.uiPos}/>
