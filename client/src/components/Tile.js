@@ -33,13 +33,12 @@ const Slot = (props) => {
 class Tile extends React.Component {
   constructor(props) {
     super(props);
-    console.log("Tile props: ", props);
   }
 
 
   render() {
-    const {value, position, onMouseDown} = this.props;
-    const optionalOnMouseDown = {onMouseDown: onMouseDown}
+    const {value, position, onMouseMove, onMouseDown} = this.props;
+    const optionalOnMouseDown = {onMouseMove: onMouseMove, onMouseDown: onMouseDown}
     return (
       <div style={{...baseStyles.tile, ...position}} {...optionalOnMouseDown}>{value}</div>
     )
@@ -63,15 +62,23 @@ function withDrag(Component) {
       
     }
 
-    handleOnMouseDown() {
-      console.log("clicked", this.props.value)
+    handleOnMouseDown(e) {
+      this.setState({
+        inDrag: true,
+        prevMouse: {x: e.pageX, y: e.pageY},
+        offset: {dx: 0, dy: 0}
+      })
+    }
+
+    handleOnMouseMove(e) {
+      console.log("On Mouse Move")
     }
 
     render() {
-      console.log("Rendering component: ", this.props.value)
       return (
         <Component 
-          onMouseDown={this.handleOnMouseDown} 
+          onMouseDown={(e) => this.handleOnMouseDown(e)} 
+          onMouseMove={(e) => this.handleOnMouseMove(e)}
           position={this.props.defaultPosition} 
           {...this.props} 
         />
@@ -87,7 +94,6 @@ const TileWithDrag = withDrag(Tile);
 export const Board2 = ({ initialState }) => {
   const tileSize = 100;
   const [board, setBoard] = useState(initialState);
-  console.log("Board is", board)
 
   const zeroPos = findZero(board);
 
