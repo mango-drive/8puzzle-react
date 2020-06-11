@@ -73,26 +73,6 @@ export const deepCopy = (arr) => {
   })
   return newArray;
 }
-
-const prettyPrintArrayOfArrays = (arr) => {
-    let output = "";
-    for(const a of arr) {
-        output = output.concat(arrayToString(a));
-        output = output.concat("\n");
-    }
-    console.log(output);
-}
-
-
-const arrayToString = (arr) => {
-    let output = "";
-    for(const row of arr) {
-        output = output.concat(row.toString());
-        output = output.concat("\n");
-    }
-    return output
-}
-
 export const calcMaxOffset = (arr, styles, idx) => {
   const slotIdx = findZero(arr);
   const slotPos = styles[slotIdx.i][slotIdx.j];

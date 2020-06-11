@@ -1,6 +1,7 @@
 
 import React, {useState} from 'react';
 import { areNeighbours, findZero, createBounds, createDefaultPosition } from '../utils/util'
+import {withMoveAnimation} from './withMoveAnimation'
 import { withDrag } from './withDrag'
 import { baseStyles } from './styles'
 import '../index.css'
@@ -20,10 +21,15 @@ class Tile extends React.Component {
   }
 
   render() {
-    const {value, position, onMouseDown} = this.props;
-    const optionalOnMouseDown = {onMouseDown: onMouseDown}
+
+    // onClick coming from withMoveAnimation
+    const {value, position, onMouseDown, onClick} = this.props;
+    console.log("Rendering ", value, position);
+    const optionalMouseHandlers = {onClick: onClick, onMouseDown: onMouseDown}
+    const optionalAnimation = { ...this.props.additionalStyles }
+    console.log(optionalAnimation)
     return (
-      <div style={{...baseStyles.tile, ...position}} {...optionalOnMouseDown}>
+      <div style={{...baseStyles.tile, ...position, ...optionalAnimation}} {...optionalMouseHandlers}>
         <div className = 'disable-selection' style={baseStyles.tileContent}>{value}</div>
       </div>
     )
@@ -31,6 +37,7 @@ class Tile extends React.Component {
 }
 
 const TileWithDrag = withDrag(Tile);
+const TileWithAnimation = withMoveAnimation(Tile);
 
 export const Board2 = ({ initialState }) => {
   const tileSize = 100;
@@ -47,8 +54,11 @@ export const Board2 = ({ initialState }) => {
         const idx = {i, j}
         const position = createDefaultPosition(idx, tileSize)
         const tile = {value: value, idx: idx, uiPos: position}
+
         if (isSlot(idx)) 
-          return <Slot key={0} position={tile.uiPos}></Slot>
+          return ( 
+            <Slot key={0} position={tile.uiPos}></Slot> 
+          )
 
         if (areNeighbours(slotIdx, tile.idx)) {
           const bounds = createBounds(tile.uiPos, slotUIPosition)
@@ -56,14 +66,19 @@ export const Board2 = ({ initialState }) => {
             <TileWithDrag key={tile.value} value={tile.value} style = {baseStyles.tile} defaultPosition={tile.uiPos} bounds={bounds}/>
           )
         } else {
-          return <Tile key={tile.value} value={tile.value} position={tile.uiPos}/>
+          return (
+            <Tile key={tile.value} value={tile.value} position={tile.uiPos}/>
+          )
         }
-
       })
     })
   }
 
   return (
-    <div>{renderBoard()}</div>
+    <div>
+      {renderBoard()}
+      <TileWithAnimation key={12} value={12} position={ {top: 600, left: 100} }/>
+    </div>
+
   )
 }

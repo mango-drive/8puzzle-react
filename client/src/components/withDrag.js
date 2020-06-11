@@ -56,7 +56,6 @@ export function withDrag(Component) {
     handleOnMouseUp() {
       document.removeEventListener("mouseup", this.handleOnMouseUp);
       document.removeEventListener("mousemove", this.handleOnMouseMove)
-      console.log("onMouseUp called by ", this.props.value)
       this.setState({inDrag: false})
     }
 
