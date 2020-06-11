@@ -119,3 +119,32 @@ export const constrainDrag = (offset, tile, tiles, styles) => {
 
   return offset;
 }
+
+export const createDefaultPosition= ({i, j}, size) => {
+  return {top: i*size, left: j*size};
+}
+
+export const createBounds = (tilePos, slotPos) => {
+  return {
+    top: Math.min(tilePos.top, slotPos.top),
+    bottom: Math.max(tilePos.top, slotPos.top),
+    left: Math.min(tilePos.left, slotPos.left),
+    right: Math.max(tilePos.left, slotPos.left),
+  }
+}
+
+export const dragWithinBounds = (delta, position, bounds)  => {
+  const {dx, dy} = delta;
+
+  position.top += dy;
+  position.left += dx;
+
+  console.log("position", position, "bounds", bounds)
+
+  position.top = Math.max(bounds.top, position.top)
+  position.left = Math.max(bounds.left, position.left);
+  position.top = Math.min(bounds.bottom, position.top);
+  position.left = Math.min(bounds.right, position.left);
+
+  return position;
+}

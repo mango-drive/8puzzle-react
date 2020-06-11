@@ -1,6 +1,6 @@
 
 import React, {useState} from 'react';
-import { areNeighbours, findZero, neighboursOfIdx } from '../utils/util'
+import { areNeighbours, findZero, createBounds, createDefaultPosition, dragWithinBounds } from '../utils/util'
 import '../index.css'
 
 const baseStyles = {
@@ -12,6 +12,16 @@ const baseStyles = {
     border: "0.5px solid black",
     borderRadius: "7px"
   }, 
+
+  tileContent: {
+    position: 'relative',
+    float: 'left',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontWeight: 'bold',
+    fontSize: '30px'
+  },
 
   blankTile: {
     width: 100,
@@ -37,10 +47,13 @@ class Tile extends React.Component {
 
 
   render() {
-    const {value, position, onMouseMove, onMouseDown, onMouseUp} = this.props;
-    const optionalOnMouseDown = {onMouseMove: onMouseMove, onMouseDown: onMouseDown, onMouseUp: onMouseUp}
+    const {value, position, onMouseDown} = this.props;
+    const optionalOnMouseDown = {onMouseDown: onMouseDown}
     return (
-      <div style={{...baseStyles.tile, ...position}} {...optionalOnMouseDown}>{value}</div>
+      <div style={{...baseStyles.tile, ...position}} {...optionalOnMouseDown}>
+        <div className = 'disable-selection' style={baseStyles.tileContent}>{value}</div>
+        
+      </div>
     )
   }
 }
@@ -48,9 +61,9 @@ class Tile extends React.Component {
 function withDrag(Component) {
   return class extends React.Component {
     // passes absolute position down to component
-    // infers from bounds whether component can move X, Y
     constructor(props) {
       super(props);
+      console.log("inDrag: false in constructor")
 
       this.state = {
         position: this.props.defaultPosition,
@@ -58,6 +71,15 @@ function withDrag(Component) {
         prevMouse: {x: 0, y: 0},
         offset: {dx: 0, dy: 0},
       }
+
+      this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
+      this.handleOnMouseMove = this.handleOnMouseMove.bind(this)
+
+    }
+
+    componentDidMount() {
+      document.addEventListener("mouseup", this.handleOnMouseUp);
+      document.addEventListener("mousemove", this.handleOnMouseMove)
     }
 
     mouseDelta = (event) => {
@@ -66,6 +88,7 @@ function withDrag(Component) {
     }
 
     handleOnMouseDown(e) {
+      console.log("inDrag: true")
       this.setState({
         inDrag: true,
         prevMouse: {x: e.pageX, y: e.pageY},
@@ -75,21 +98,9 @@ function withDrag(Component) {
 
     handleOnMouseMove(e) {
       if (this.state.inDrag) {
-        let { offset, position } = this.state;
-        const {dx, dy} = this.mouseDelta(e);
-
-        position.top += dy;
-        position.left += dx;
-
-        const { width, height} = this.props.style;
-        const { bounds } = this.props;
-
-        position.top = Math.max(bounds.top, position.top)
-        position.left = Math.max(bounds.left, position.left);
-        position.top = Math.min(bounds.bottom, position.top);
-        position.left = Math.min(bounds.right, position.left);
-        
-
+        let { position } = this.state;
+        const delta = this.mouseDelta(e);
+        position = dragWithinBounds(delta, position, this.props.bounds)
         this.setState({
           position: position,
           prevMouse: {x: e.pageX, y: e.pageY}
@@ -98,11 +109,13 @@ function withDrag(Component) {
     }
 
     handleOnMouseUp() {
+      console.log("inDrag: false")
       this.setState({inDrag: false})
     }
 
     render() {
       return (
+
         <Component 
           {...this.props} 
           onMouseDown={(e) => this.handleOnMouseDown(e)} 
@@ -123,27 +136,27 @@ export const Board2 = ({ initialState }) => {
   const tileSize = 100;
   const [board, setBoard] = useState(initialState);
 
-  const zeroPos = findZero(board);
+  const slotIdx = findZero(board);
+  const slotUIPosition = createDefaultPosition(slotIdx, tileSize);
+
+  
 
   const renderBoard = () => {
     return board.map((row, i) => {
       return row.map((value, j) => {
 
         
-        const position = {top: i*tileSize, left: j*tileSize};
-        const tile = {value: value, pos: {i, j}, uiPos: position}
+        const idx = {i, j}
+        const position = createDefaultPosition(idx, tileSize)
+        const tile = {value: value, idx: idx, uiPos: position}
 
 
-        if (i === zeroPos.i && j === zeroPos.j) 
+        if (i === slotIdx.i && j === slotIdx.j) 
           return <Slot key={0} position={tile.uiPos}></Slot>
-        if (areNeighbours(zeroPos, tile.pos)) {
-          console.log("Rendering tile with drag", tile.value)
-          const bounds = {
-            top: 0,
-            bottom: 150,
-            left: 0,
-            right: 150
-          }
+          
+        if (areNeighbours(slotIdx, tile.idx)) {
+          const bounds = createBounds(tile.uiPos, slotUIPosition)
+          console.log("bounds for ", idx, bounds)
 
           return (
             <TileWithDrag key={tile.value} value={tile.value} style = {baseStyles.tile} defaultPosition={tile.uiPos} bounds={bounds}/>
