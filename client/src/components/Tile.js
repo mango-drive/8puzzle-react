@@ -26,8 +26,8 @@ class Tile extends React.Component {
     const {value, position, onMouseDown, onClick} = this.props;
     console.log("Rendering ", value, position);
     const optionalMouseHandlers = {onClick: onClick, onMouseDown: onMouseDown}
-    const optionalAnimation = { ...this.props.additionalStyles }
-    console.log(optionalAnimation)
+    const optionalAnimation = { ...this.props.additionalStyles  };
+    console.log("animation: ", optionalAnimation)
     return (
       <div style={{...baseStyles.tile, ...position, ...optionalAnimation}} {...optionalMouseHandlers}>
         <div className = 'disable-selection' style={baseStyles.tileContent}>{value}</div>
@@ -63,7 +63,12 @@ export const Board2 = ({ initialState }) => {
         if (areNeighbours(slotIdx, tile.idx)) {
           const bounds = createBounds(tile.uiPos, slotUIPosition)
           return (
-            <TileWithDrag key={tile.value} value={tile.value} style = {baseStyles.tile} defaultPosition={tile.uiPos} bounds={bounds}/>
+            <TileWithAnimation key={tile.value} 
+                          value={tile.value} 
+                          style = {baseStyles.tile} 
+                          position={tile.uiPos} 
+                          targetPosition = {slotUIPosition}
+            />
           )
         } else {
           return (
@@ -77,7 +82,7 @@ export const Board2 = ({ initialState }) => {
   return (
     <div>
       {renderBoard()}
-      <TileWithAnimation key={12} value={12} position={ {top: 600, left: 100} }/>
+      <TileWithAnimation key={12} value={12} position={ {top: 600, left: 100}} targetPosition={{top:800, left:200}}/>
     </div>
 
   )
