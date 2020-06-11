@@ -10,6 +10,7 @@ export const withMoveAnimation = (Target) => {
         constructor(props) {
             super(props);
             this.state = { animating: false, animationStyle: {} };
+            this.handleOnTransitionEnd = this.handleOnTransitionEnd.bind(this);
         }
 
         onClick = () => {
@@ -35,7 +36,8 @@ export const withMoveAnimation = (Target) => {
         }
 
         handleOnTransitionEnd() {
-            console.log("animation end")
+            const {handleOnMoveComplete} = this.props;
+            handleOnMoveComplete(this.props.idx);
         }
 
         render() {
