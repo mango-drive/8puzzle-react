@@ -23,13 +23,15 @@ class Tile extends React.Component {
   render() {
 
     // onClick coming from withMoveAnimation
-    const {value, position, onMouseDown, onClick} = this.props;
-    console.log("Rendering ", value, position);
-    const optionalMouseHandlers = {onClick: onClick, onMouseDown: onMouseDown}
+    const {value, position, onMouseDown, onClick, onTransitionEnd} = this.props;
+    const optionalMouseHandlers = {onClick, onMouseDown}
+    const optionalAnimationHandlers = {onTransitionEnd}
     const optionalAnimation = { ...this.props.additionalStyles  };
-    console.log("animation: ", optionalAnimation)
     return (
-      <div style={{...baseStyles.tile, ...position, ...optionalAnimation}} {...optionalMouseHandlers}>
+      <div style= {{...baseStyles.tile, ...position, ...optionalAnimation}} 
+                  {...optionalMouseHandlers}
+                  {...optionalAnimationHandlers}
+      >
         <div className = 'disable-selection' style={baseStyles.tileContent}>{value}</div>
       </div>
     )
@@ -47,6 +49,7 @@ export const Board2 = ({ initialState }) => {
   const slotUIPosition = createDefaultPosition(slotIdx, tileSize);
 
   const isSlot = ({i, j}) => i === slotIdx.i && j === slotIdx.j;
+
 
   const renderBoard = () => {
     return board.map((row, i) => {

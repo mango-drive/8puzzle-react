@@ -34,12 +34,16 @@ export const withMoveAnimation = (Target) => {
             return animationStyle;
         }
 
+        handleOnTransitionEnd() {
+            console.log("animation end")
+        }
+
         render() {
             const {animationStyle} = this.state;
             return (
                 <Target onClick={this.onClick}
                         additionalStyles={animationStyle}
-                        onAnimationEnd={this.handleOnAnimationEnd}
+                        onTransitionEnd={this.handleOnTransitionEnd}
                         { ...this.props }
                 />
             )
