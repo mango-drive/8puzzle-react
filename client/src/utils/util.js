@@ -83,6 +83,7 @@ const prettyPrintArrayOfArrays = (arr) => {
     console.log(output);
 }
 
+
 const arrayToString = (arr) => {
     let output = "";
     for(const row of arr) {
@@ -139,12 +140,13 @@ export const dragWithinBounds = (delta, position, bounds)  => {
   position.top += dy;
   position.left += dx;
 
-  console.log("position", position, "bounds", bounds)
 
   position.top = Math.max(bounds.top, position.top)
   position.left = Math.max(bounds.left, position.left);
   position.top = Math.min(bounds.bottom, position.top);
   position.left = Math.min(bounds.right, position.left);
+
+  console.log("position", position, "bounds", bounds)
 
   return position;
 }
