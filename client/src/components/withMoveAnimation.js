@@ -9,14 +9,16 @@ export const withMoveAnimation = (Target) => {
     return class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {move: false, animationStyle: {}};
+            this.state = { animating: false, animationStyle: {} };
         }
 
         onClick = () => {
-            if (!this.state.move) {
-                this.setState({ move: true, animationStyle: this.createCSSTransform() })
+            if (!this.state.animating) {
+                this.setState({animating: true, animationStyle: this.createCSSTransform() })
+            } else {
+                this.setState({animating: false, animationStyle: {}})
             }
-        
+
         }
 
         createCSSTransform() {
@@ -29,18 +31,15 @@ export const withMoveAnimation = (Target) => {
                 transform: `translate(${tX}px, ${tY}px)`,
                 transition: 'transform 1s ease'
             }
-
-            console.log("Created transform:", animationStyle)
-
             return animationStyle;
         }
 
         render() {
-            console.log("withMove props:", this.props)
-            console.log()
+            const {animationStyle} = this.state;
             return (
                 <Target onClick={this.onClick}
-                        additionalStyles={this.state.move? this.state.animationStyle : {}}
+                        additionalStyles={animationStyle}
+                        onAnimationEnd={this.handleOnAnimationEnd}
                         { ...this.props }
                 />
             )
