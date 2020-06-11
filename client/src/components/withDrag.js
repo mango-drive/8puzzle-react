@@ -18,7 +18,6 @@ export function withDrag(Component) {
       this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
       this.handleOnMouseMove = this.handleOnMouseMove.bind(this)
 
-
     }
 
     componentDidMount() {

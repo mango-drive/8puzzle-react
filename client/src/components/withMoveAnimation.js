@@ -30,7 +30,7 @@ export const withMoveAnimation = (Target) => {
 
             const animationStyle = {
                 transform: `translate(${tX}px, ${tY}px)`,
-                transition: 'transform 1s ease'
+                transition: 'transform 0.3s cubic-bezier(.29,.02,.54,-0.26)'
             }
             return animationStyle;
         }
