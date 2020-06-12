@@ -3,46 +3,84 @@ import React from 'react';
 import { 
   areNeighbours, 
   findZero, 
-  createBounds, 
-  createDefaultPosition 
+  createDefaultPosition,
+  deepCopy,
+  swap
 } from '../utils/util'
-
-import { withMoveAnimation }  from './withMoveAnimation'
-
+import { solve, parseSolution } from '../utils/solve'
+import { withMoveAnimation }  from '../hoc/withMoveAnimation'
 import {Tile, Slot} from './Tile'
-
-import { baseStyles } from './styles'
+import { baseStyles } from '../styles'
 
 export class Board extends React.Component {
   constructor(props) {
     super(props);
+
+    const board = [[1, 0],
+                   ];
+
+    const slotIdx = findZero(board);
+
+    this.handleMoveComplete = this.handleMoveComplete.bind(this)
+
+    const { solveAction } = this.props;
+
+    let solution;
+    if (solveAction) {
+      solution = solve(board);
+      console.log(solution)
+    }
+
     this.state = {
-        board: [[1, 4, 2],
-                [3, 0, 5],
-                [6, 7, 8]] 
+        board: board,
+        slotIdx: slotIdx,
+        solving: solveAction,
     }
   }
 
-  handleMoveComplete(idx) {
-    console.log("Move complete: ", idx)
+  componentWillReceiveProps() {
+    const { solveAction } = this.props;
+    const solution = solve(this.state.board);
+    const tilesToMove = parseSolution(solution)
+    this.setState({ solving: this.props.solveAction, tilesToMove: tilesToMove, tileToMove: tilesToMove[0], moveIdx: 0})
   }
 
+  handleMoveComplete(idx) {
+    console.log("animation complete")
+    const { board, slotIdx, } = this.state;
+    const newBoard = deepCopy(board);
+    swap(newBoard, idx, slotIdx);
+
+    this.setState( {
+      board: newBoard,
+      slotIdx: findZero(newBoard)
+    })
+
+  }
+
+
   render() {
-    return <BoardRepresentation board={this.state.board} 
-                                handleMoveComplete={this.handleMoveComplete}
-            />
+    const { board, slotIdx, tileToMove, solving } = this.state;
+    console.log("Board solving", tileToMove);
+    return (
+      <BoardRepresentation board={board} 
+                          slotIdx={slotIdx}
+                          tileToMove={tileToMove}
+                          handleMoveComplete={this.handleMoveComplete}
+      />
+    )
   }
 }
 
-export const BoardRepresentation = ({ board, handleMoveComplete }) => {
+export const BoardRepresentation = ({ board, slotIdx, tileToMove, handleMoveComplete }) => {
   const TileWithAnimation = withMoveAnimation(Tile);
 
   const tileSize = 100;
 
-  const slotIdx = findZero(board);
   const slotUIPosition = createDefaultPosition(slotIdx, tileSize);
 
   const isSlot = ({i, j}) => i === slotIdx.i && j === slotIdx.j;
+  const isMove = ({i, j}) => tileToMove && i === tileToMove.i && j === tileToMove.j;
 
   const renderBoard = () => {
     return board.map((row, i) => {
@@ -56,16 +94,15 @@ export const BoardRepresentation = ({ board, handleMoveComplete }) => {
             <Slot key={0} position={tile.uiPos}></Slot> 
           )
 
-        if (areNeighbours(slotIdx, tile.idx)) {
-          const bounds = createBounds(tile.uiPos, slotUIPosition)
+        if (isMove(idx)) {
+          console.log("with animation", tile.value)
           return (
             <TileWithAnimation key={tile.value} 
                           value={tile.value} 
-                          idx = {idx}
-                          style = {baseStyles.tile} 
                           position={tile.uiPos} 
                           targetPosition = {slotUIPosition}
                           handleOnMoveComplete = {handleMoveComplete}
+                          animate={true}
             />
           )
         } else {

@@ -25,5 +25,13 @@ export const baseStyles = {
     height: 100,
     opacity: 0,
     position: 'absolute'
+  },
+
+  solveButton: {
+    width:150,
+    height:50,
+    position:'relative',
+    top: '350px',
+    left: '75px'
   }
 }

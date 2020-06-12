@@ -129,7 +129,7 @@ const priorityCompare = (node1, node2) => {
 }
 
 
-export const solve = (tiles) => {
+export const solve = (tiles) => { 
     let solutionNode = null;
     const initialBoard = new Board(tiles)
     const initialNode = new SearchNode(initialBoard, 0, null)
@@ -164,3 +164,15 @@ export const solve = (tiles) => {
     return solution;
 }
 
+// It's probably more efficient to store the tile to move
+// during solve, but this was the quick and easy way
+export const parseSolution = (solution) => {
+    const tilesToMove = [];
+    // when tile is moved, the slot is now
+    // where the tile used to be
+    for (let m = 1; m < solution.length; m++) {
+        tilesToMove.push(findZero(solution[m].board.tiles));
+    }
+
+    return tilesToMove;
+}

@@ -54,8 +54,9 @@ export const areNeighbours = (idx1, idx2) => {
 
 export const isValidIdx = (arr, {i, j}) => {
     const n = arr.length;
+    if (i < 0 || i >= n) return false;
     const m = arr[i].length
-    return 0 <= i && i < n && 0 <= j && j < m;
+    return 0 <= j && j < m;
 }
 
 export const swap = (arr, from, to) => {

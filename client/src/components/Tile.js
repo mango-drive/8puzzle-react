@@ -1,7 +1,7 @@
 
 import React, {useState} from 'react';
 import { areNeighbours, findZero, createBounds, createDefaultPosition } from '../utils/util'
-import { baseStyles } from './styles'
+import { baseStyles } from '../styles'
 import '../index.css'
 
 export const Slot = (props) => {

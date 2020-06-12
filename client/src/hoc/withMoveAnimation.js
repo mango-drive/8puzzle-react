@@ -1,28 +1,18 @@
 import React from 'react';
 
-const animationStyle = {
-    transform: 'translateY(150px)',
-    transition: 'transform 1s ease',
-};
 
 export const withMoveAnimation = (Target) => {
     return class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = { animating: false, animationStyle: {} };
+            this.state = { animationStyle: this.createCSSTransform() };
             this.handleOnTransitionEnd = this.handleOnTransitionEnd.bind(this);
         }
+        
 
-        onClick = () => {
-            if (!this.state.animating) {
-                this.setState({animating: true, animationStyle: this.createCSSTransform() })
-            } else {
-                this.setState({animating: false, animationStyle: {}})
-            }
-
-        }
 
         createCSSTransform() {
+            console.log("creating transform")
             const {targetPosition, position} = this.props;
 
             const tY = targetPosition.top - position.top; 
@@ -30,18 +20,21 @@ export const withMoveAnimation = (Target) => {
 
             const animationStyle = {
                 transform: `translate(${tX}px, ${tY}px)`,
+                //https://easings.net/#easeInBack
                 transition: 'transform 0.3s cubic-bezier(.29,.02,.54,-0.26)'
             }
             return animationStyle;
         }
 
         handleOnTransitionEnd() {
+            console.log("transition end")
             const {handleOnMoveComplete} = this.props;
             handleOnMoveComplete(this.props.idx);
         }
 
         render() {
             const {animationStyle} = this.state;
+            console.log("animation style", animationStyle)
             return (
                 <Target onClick={this.onClick}
                         additionalStyles={animationStyle}
