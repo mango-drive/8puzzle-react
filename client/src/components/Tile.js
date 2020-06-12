@@ -1,37 +1,39 @@
-
-import React, {useState} from 'react';
-import { areNeighbours, findZero, createBounds, createDefaultPosition } from '../utils/util'
-import { baseStyles } from '../styles'
-import '../index.css'
+import React from 'react';
+import { baseStyles } from "../styles";
+import { Context } from "../store/store";
+import { useContext } from "react";
 
 export const Slot = (props) => {
-  return (
-    // renders tile in position
-    <div 
-      style={{...baseStyles.blankTile, ...props.position}}
-    ></div>
-  )
-}
-
-export class Tile extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-
-    // onClick coming from withMoveAnimation
-    const {value, position, onMouseDown, onClick, onTransitionEnd} = this.props;
-    const optionalMouseHandlers = {onClick, onMouseDown}
-    const optionalAnimationHandlers = {onTransitionEnd}
-    const optionalAnimation = { ...this.props.additionalStyles  };
+    const { position } = props;
     return (
-      <div style= {{...baseStyles.tile, ...position, ...optionalAnimation}} 
-                  {...optionalMouseHandlers}
-                  {...optionalAnimationHandlers}
-      >
-        <div className = 'disable-selection' style={baseStyles.tileContent}>{value}</div>
-      </div>
+        <div style={{...baseStyles.blankTile, ...position}}/>
     )
-  }
 }
+
+export const Tile = (props) => {
+    const style = {
+        ...baseStyles.tile, 
+        ...props.position, 
+        ...props.animation
+    }
+    
+    console.log("Tile has props: ", props)
+    console.log("Tile has style", style)
+
+    const {store, dispatch} = useContext(Context);
+
+    const handleOnTransitionEnd = () => {
+        console.log("transition end")
+        dispatch({type: "animation-end"})
+    }
+
+    return ( 
+        <div style={style} onTransitionEnd={handleOnTransitionEnd}>
+            <div style={baseStyles.tileContent}
+                 className = 'disable-selection'>
+                {props.value}
+            </div>
+        </div>
+    )
+}
+
