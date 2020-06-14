@@ -11,10 +11,6 @@ export default function App() {
   return (
     <Context.Provider value = {{store, dispatch}}>
       <Board></Board>
-      <button 
-        style={baseStyles.solveButton} 
-        onClick={() => dispatch({type: "solve"})}
-      >Solve</button>
     </Context.Provider>
   )
 }

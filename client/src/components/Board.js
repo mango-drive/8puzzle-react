@@ -1,29 +1,61 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../store/store';
 import { baseStyles } from '../styles';
-import { findZero, createDefaultPosition } from '../utils/util';
+import { findZero, createDefaultPosition, swap } from '../utils/util';
 import { Tile, Slot} from './Tile';
-import { withMoveAnimation } from '../hoc/withMoveAnimation';
+import { useAnimation } from '../hoc/useAnimation';
+import { motion } from 'framer-motion';
+import { parseSolution, solve } from '../utils/solve.js'
 
 export const Board = (props) => {
-    const { store , dispatch } = useContext(Context);
-    const { board } = store;
+    
+    const [ movingTile, setMovingTile ] = useState(null)
+
+    const [ board, setBoard] = useState(
+            [[1,2,3],
+             [4,0,5],
+             [6,7,8]]
+    )
+
+
+    async function animateSolution() {
+        const solution = parseSolution(solve(board));
+
+        // for each in solution
+        for (const move of solution) {
+            setMovingTile(move);
+            await wait(100)
+            const newBoard = board;
+            const slotIdx = findZero(newBoard);
+            swap(newBoard, slotIdx, move);
+            setBoard(newBoard)
+        }
+    }
+
+    async function wait(ms) {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms);
+        });
+    }
+
 
     return (
+        <div>
         <div style={baseStyles.board}>
-            <BoardRepresentation board={{board}}/>
+            <BoardRepresentation board={board} movingTile={movingTile}/>
+        </div>
+        <button onClick={animateSolution}style={baseStyles.solveButton}>Solve</button>
         </div>
     )
 }
 
 const BoardRepresentation = (props) => {
-    const tileSize = 100;
+    const tileSize = 50;
     
-    const { board } = props.board;
-    const { store, dispatch } = useContext(Context )
-    const { movingTile } = store;
+    const { board, movingTile } = props;
 
-    const TileWithMoveAnimation = withMoveAnimation(Tile);
+    const { store, dispatch } = useContext(Context )
+
 
     const slotIdx = findZero(board);
     const slotPosition = createDefaultPosition(slotIdx, tileSize);
@@ -35,20 +67,25 @@ const BoardRepresentation = (props) => {
     const renderBoard = () => {
         return board.map((row, i) => {
             return row.map((value, j) => {
-                const position = createDefaultPosition({i, j}, tileSize);
-                const tile = {value, position}
+                const innerStyle = {...createDefaultPosition({i, j}, tileSize)};
+                const tile = {value, innerStyle}
 
                 if (isSlot({i, j})) {
-                    return <Slot key={0} position={position} value={0}/>
+                    return <Slot key={0} {...tile}/>
                 }
 
+                
                 else if (isMove({i, j})) {
-                    console.log("Board will animate", tile.value)
-                    return <TileWithMoveAnimation 
-                                animationEndPosition = {slotPosition}
-                                key={tile.value} 
-                                {...tile}
-                            />
+                    console.log("animate")
+                    const animation = {
+                        x: slotPosition.left - innerStyle.left,
+                        y: slotPosition.top - innerStyle.top
+                    }
+                    return (
+                        <motion.div animate={animation}>
+                            <Tile key={tile.value} {...tile}></Tile>
+                        </motion.div>
+                    )
                 }
 
                 else {

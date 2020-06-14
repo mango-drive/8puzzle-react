@@ -2,8 +2,8 @@
 
 export const baseStyles = {
   tile: {
-    width: 100,
-    height: 100,
+    width: 45,
+    height: 45,
     position: 'absolute',
     backgroundColor:"#DFCFBE",
     border: "0.5px solid black",
@@ -17,7 +17,7 @@ export const baseStyles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     fontWeight: 'bold',
-    fontSize: '30px'
+    fontSize: '20px'
   },
 
   blankTile: {
