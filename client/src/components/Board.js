@@ -1,13 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Context } from '../store/store';
+import React, { useState } from 'react';
 import { baseStyles } from '../styles';
 import { findZero, createDefaultPosition, swap } from '../utils/util';
 import { Tile, Slot} from './Tile';
-import { useAnimation } from '../hoc/useAnimation';
 import { motion } from 'framer-motion';
 import { parseSolution, solve } from '../utils/solve.js'
 
-export const Board = (props) => {
+export const Board = () => {
     
     const [ movingTile, setMovingTile ] = useState(null)
 
@@ -54,9 +52,6 @@ const BoardRepresentation = (props) => {
     
     const { board, movingTile } = props;
 
-    const { store, dispatch } = useContext(Context )
-
-
     const slotIdx = findZero(board);
     const slotPosition = createDefaultPosition(slotIdx, tileSize);
 
@@ -76,7 +71,6 @@ const BoardRepresentation = (props) => {
 
                 
                 else if (isMove({i, j})) {
-                    console.log("animate")
                     const animation = {
                         x: slotPosition.left - innerStyle.left,
                         y: slotPosition.top - innerStyle.top
