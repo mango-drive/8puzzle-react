@@ -5,7 +5,7 @@ export const baseStyles = {
     width: 47,
     height: 47,
     position: 'absolute',
-    backgroundColor:"#DFCFBE",
+    backgroundColor:"#bac964",
     border: "0.5px solid black",
     borderRadius: "7px"
   }, 
@@ -31,7 +31,12 @@ export const baseStyles = {
     width:150,
     height:50,
     position:'relative',
-    top: '350px',
-    left: '75px'
+    top: '17px',
+  },
+
+  board: {
+    backgroundColor: '#84a9ac',
+    width: 150,
+    height: 150
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { baseStyles } from '../styles';
-import { findZero, createDefaultPosition, swap, areNeighbours } from '../utils/util';
+import { findZero, createDefaultPosition, swap, areNeighbours, deepCopy } from '../utils/util';
 import { Tile, Slot} from './Tile';
 import { motion } from 'framer-motion';
 import { parseSolution, solve } from '../utils/solve.js'
@@ -15,8 +15,12 @@ export const Board = () => {
              [6,7,8]]
     )
 
+    const [ solving, setSolving ] = useState(false);
+
 
     async function animateSolution() {
+        setSolving(true);
+
         const solution = parseSolution(solve(board));
 
         // for each in solution
@@ -28,6 +32,8 @@ export const Board = () => {
             swap(newBoard, slotIdx, move);
             setBoard(newBoard)
         }
+
+        setSolving(false);
     }
 
     async function wait(ms) {
@@ -36,13 +42,25 @@ export const Board = () => {
         });
     }
 
+    const handleOnAnimationComplete = (idx) => {
+        if (!solving) {
+            console.log("animation complete")
+            const newBoard = deepCopy(board);
+            const slotIdx = findZero(newBoard);
+            swap(newBoard, slotIdx, idx);
+            setBoard(newBoard)
+            console.log("Board is now", newBoard)
+        }
+    }
+
 
     return (
         <div>
-        <div style={baseStyles.board}>
-            <BoardRepresentation board={board} movingTile={movingTile}/>
-        </div>
-        <button onClick={animateSolution}style={baseStyles.solveButton}>Solve</button>
+            <div style={baseStyles.board}>
+                <BoardRepresentation board={board} movingTile={movingTile} 
+                    handleOnAnimationComplete={handleOnAnimationComplete}/>
+            </div>
+            <button onClick={animateSolution} style={baseStyles.solveButton}>Solve</button>
         </div>
     )
 }
@@ -52,16 +70,19 @@ const BoardRepresentation = (props) => {
     
     const { board, movingTile } = props;
 
+    const [ clickedTile, setClickedTile ] = useState(null);
+
     const slotIdx = findZero(board);
     const slotPosition = createDefaultPosition(slotIdx, tileSize);
 
-
     const isSlot = ({i, j}) => i === slotIdx.i && j === slotIdx.j;
     const isMove = ({i, j}) => movingTile && i === movingTile.i && j === movingTile.j;
+    const isClicked = ({i, j}) => clickedTile && i === clickedTile.i && j === clickedTile.j;
 
-    const handleOnTileClick = () => {
-        console.log("clicked")
+    const handleOnTileClick = (idx) => {
+        setClickedTile(idx);
     }
+
 
     const renderBoard = () => {
         return board.map((row, i) => {
@@ -71,34 +92,36 @@ const BoardRepresentation = (props) => {
                 const tile = {value, innerStyle}
 
                 if (isSlot(idx)) {
-                    return <Slot key={0} {...tile}/>
+                    return <Slot key={0} {...tile} position = {slotPosition}/>
                 }
 
                 
-                if (isMove(idx)) {
+                if (isMove(idx) || isClicked(idx)) {
                     const animation = {
                         x: slotPosition.left - innerStyle.left,
                         y: slotPosition.top - innerStyle.top
                     }
+                    
                     return (
-                        <motion.div animate={animation}>
+                        <motion.div animate={animation} key={tile.value} onAnimationComplete={ () => { props.handleOnAnimationComplete(idx); setClickedTile(null);}}>
                             <Tile key={tile.value} {...tile}></Tile>
                         </motion.div>
                     )
+
+
                 }
 
                 if (areNeighbours(slotIdx, idx)) {
+                    console.log(value, "is a neighbour")
                     return (
-                        <div key={tile.value} onClick={() => handleOnTileClick()}>
+                        <div key={tile.value} onClick={() => handleOnTileClick(idx)}>
                             <Tile {...tile}/>
                         </div>
                     )
 
                 }
 
-
-
-                return <Tile key={tile.value} {...tile}/>
+            else { return <Tile key={tile.value} {...tile}/> }
 
             })
         })
