@@ -2,8 +2,8 @@
 
 export const baseStyles = {
   tile: {
-    width: 45,
-    height: 45,
+    width: 47,
+    height: 47,
     position: 'absolute',
     backgroundColor:"#DFCFBE",
     border: "0.5px solid black",
@@ -21,8 +21,8 @@ export const baseStyles = {
   },
 
   blankTile: {
-    width: 100,
-    height: 100,
+    width: 47,
+    height: 47,
     opacity: 0,
     position: 'absolute'
   },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { baseStyles } from '../styles';
-import { findZero, createDefaultPosition, swap } from '../utils/util';
+import { findZero, createDefaultPosition, swap, areNeighbours } from '../utils/util';
 import { Tile, Slot} from './Tile';
 import { motion } from 'framer-motion';
 import { parseSolution, solve } from '../utils/solve.js'
@@ -59,18 +59,23 @@ const BoardRepresentation = (props) => {
     const isSlot = ({i, j}) => i === slotIdx.i && j === slotIdx.j;
     const isMove = ({i, j}) => movingTile && i === movingTile.i && j === movingTile.j;
 
+    const handleOnTileClick = () => {
+        console.log("clicked")
+    }
+
     const renderBoard = () => {
         return board.map((row, i) => {
             return row.map((value, j) => {
-                const innerStyle = {...createDefaultPosition({i, j}, tileSize)};
+                const idx = {i, j};
+                const innerStyle = {...createDefaultPosition(idx, tileSize)};
                 const tile = {value, innerStyle}
 
-                if (isSlot({i, j})) {
+                if (isSlot(idx)) {
                     return <Slot key={0} {...tile}/>
                 }
 
                 
-                else if (isMove({i, j})) {
+                if (isMove(idx)) {
                     const animation = {
                         x: slotPosition.left - innerStyle.left,
                         y: slotPosition.top - innerStyle.top
@@ -82,9 +87,18 @@ const BoardRepresentation = (props) => {
                     )
                 }
 
-                else {
-                    return <Tile key={tile.value} {...tile}/>
+                if (areNeighbours(slotIdx, idx)) {
+                    return (
+                        <div key={tile.value} onClick={() => handleOnTileClick()}>
+                            <Tile {...tile}/>
+                        </div>
+                    )
+
                 }
+
+
+
+                return <Tile key={tile.value} {...tile}/>
 
             })
         })
