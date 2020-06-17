@@ -44,12 +44,10 @@ export const Board = () => {
 
     const handleOnAnimationComplete = (idx) => {
         if (!solving) {
-            console.log("animation complete")
             const newBoard = deepCopy(board);
             const slotIdx = findZero(newBoard);
             swap(newBoard, slotIdx, idx);
             setBoard(newBoard)
-            console.log("Board is now", newBoard)
         }
     }
 
@@ -112,7 +110,6 @@ const BoardRepresentation = (props) => {
                 }
 
                 if (areNeighbours(slotIdx, idx)) {
-                    console.log(value, "is a neighbour")
                     return (
                         <div key={tile.value} onClick={() => handleOnTileClick(idx)}>
                             <Tile {...tile}/>
