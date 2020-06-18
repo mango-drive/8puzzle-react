@@ -12,17 +12,22 @@ export const Game = () => {
 
     return (
         <div style={baseStyles.game}>
-            <div style={baseStyles.board}>
-                <Board/>
-            </div>
-            <button onClick = {handleOnSolve} style={baseStyles.solveButton}>Solve</button>
+            <Board/>
+            <SolveButton handleOnSolve={handleOnSolve}/>
         </div>
     )
 
 }
 
-export const Board = () => {
-    
+const SolveButton = (handleOnSolve) => {
+    console.log(handleOnSolve);
+    return (
+        <button onClick = {handleOnSolve} style={baseStyles.solveButton}>Solve</button>
+    )
+
+}
+
+export const Board = (onAnimationComplete) => {
     const [ solving, setSolving ] = useState(false);
     const [ movingTile, setMovingTile ] = useState(null)
     const [ board, setBoard] = useState(
@@ -56,21 +61,21 @@ export const Board = () => {
     }
 
     const handleOnAnimationComplete = (idx) => {
-        if (!solving) {
-            const newBoard = deepCopy(board);
-            const slotIdx = findZero(newBoard);
-            swap(newBoard, slotIdx, idx);
-            setBoard(newBoard)
-        }
+        const newBoard = deepCopy(board);
+        const slotIdx = findZero(newBoard);
+        swap(newBoard, slotIdx, idx);
+        setBoard(newBoard)
     }
 
 
     return (
-        <BoardRepresentation 
-            board={board} 
-            movingTile={movingTile} 
-            handleOnAnimationComplete={handleOnAnimationComplete}
-        />
+        <div style={baseStyles.board}>
+            <BoardRepresentation 
+                board={board} 
+                movingTile={movingTile} 
+                handleOnAnimationComplete={handleOnAnimationComplete}
+            />
+        </div>
     )
 }
 

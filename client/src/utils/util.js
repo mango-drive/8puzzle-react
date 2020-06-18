@@ -40,7 +40,6 @@ export const neighboursOfIdx = (arr, {i, j}) => {
       }
     })
 
-
     return neighbours;
 }
 
@@ -74,33 +73,6 @@ export const deepCopy = (arr) => {
   })
   return newArray;
 }
-export const calcMaxOffset = (arr, styles, idx) => {
-  const slotIdx = findZero(arr);
-  const slotPos = styles[slotIdx.i][slotIdx.j];
-  const {i, j} = idx;
-  const tilePos = styles[i][j];
-  const dx = slotPos.left - tilePos.left;
-  const dy = slotPos.top - tilePos.top;
-  return {dx, dy}
-}
-
-export const constrainDrag = (offset, tile, tiles, styles) => {
-  const maxOffset = calcMaxOffset(tiles, styles, tile);
-
-  if (Math.sign(maxOffset.dx) !== Math.sign(offset.dx)) {
-    offset.dx = 0;
-  } else if (Math.abs(offset.dx) > Math.abs(maxOffset.dx)) {
-    offset.dx = maxOffset.dx;
-  }
-
-  if (Math.sign(maxOffset.dy) !== Math.sign(offset.dy)) {
-    offset.dy = 0;
-  } else if (Math.abs(offset.dy) > Math.abs(maxOffset.dy)) {
-    offset.dy = maxOffset.dy;
-  }
-
-  return offset;
-}
 
 export const createDefaultPosition= ({i, j}, size) => {
   return {top: i*size, left: j*size};
@@ -121,13 +93,10 @@ export const dragWithinBounds = (delta, position, bounds)  => {
   position.top += dy;
   position.left += dx;
 
-
   position.top = Math.max(bounds.top, position.top)
   position.left = Math.max(bounds.left, position.left);
   position.top = Math.min(bounds.bottom, position.top);
   position.left = Math.min(bounds.right, position.left);
-
-  console.log("position", position, "bounds", bounds)
 
   return position;
 }
