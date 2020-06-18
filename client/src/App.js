@@ -1,10 +1,9 @@
 import React from 'react';
-import {Board} from './components/Board'
+import {Game} from './components/Board'
 
 
 export default function App() {
-
   return (
-      <Board></Board>
+      <Game/>
   )
 }

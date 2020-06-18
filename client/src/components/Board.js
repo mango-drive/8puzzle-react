@@ -5,18 +5,31 @@ import { Tile, Slot} from './Tile';
 import { motion } from 'framer-motion';
 import { parseSolution, solve } from '../utils/solve.js'
 
+export const Game = () => {
+    const handleOnSolve = () => {
+        console.log("Solve button clicked")
+    }
+
+    return (
+        <div style={baseStyles.game}>
+            <div style={baseStyles.board}>
+                <Board/>
+            </div>
+            <button onClick = {handleOnSolve} style={baseStyles.solveButton}>Solve</button>
+        </div>
+    )
+
+}
+
 export const Board = () => {
     
+    const [ solving, setSolving ] = useState(false);
     const [ movingTile, setMovingTile ] = useState(null)
-
     const [ board, setBoard] = useState(
             [[1,2,3],
              [4,0,5],
              [6,7,8]]
     )
-
-    const [ solving, setSolving ] = useState(false);
-
 
     async function animateSolution() {
         setSolving(true);
@@ -53,13 +66,11 @@ export const Board = () => {
 
 
     return (
-        <div>
-            <div style={baseStyles.board}>
-                <BoardRepresentation board={board} movingTile={movingTile} 
-                    handleOnAnimationComplete={handleOnAnimationComplete}/>
-            </div>
-            <button onClick={animateSolution} style={baseStyles.solveButton}>Solve</button>
-        </div>
+        <BoardRepresentation 
+            board={board} 
+            movingTile={movingTile} 
+            handleOnAnimationComplete={handleOnAnimationComplete}
+        />
     )
 }
 
@@ -86,14 +97,13 @@ const BoardRepresentation = (props) => {
         return board.map((row, i) => {
             return row.map((value, j) => {
                 const idx = {i, j};
-                const innerStyle = {...createDefaultPosition(idx, tileSize)};
+                const innerStyle = createDefaultPosition(idx, tileSize);
                 const tile = {value, innerStyle}
 
                 if (isSlot(idx)) {
                     return <Slot key={0} {...tile} position = {slotPosition}/>
                 }
 
-                
                 if (isMove(idx) || isClicked(idx)) {
                     const animation = {
                         x: slotPosition.left - innerStyle.left,
@@ -105,8 +115,6 @@ const BoardRepresentation = (props) => {
                             <Tile key={tile.value} {...tile}></Tile>
                         </motion.div>
                     )
-
-
                 }
 
                 if (areNeighbours(slotIdx, idx)) {

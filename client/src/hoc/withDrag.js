@@ -20,8 +20,6 @@ export function withDrag(Component) {
 
     }
 
-    componentDidMount() {
-    }
 
     mouseDelta = (event) => {
       const { prevMouse } = this.state;
@@ -31,13 +29,13 @@ export function withDrag(Component) {
     handleOnMouseDown(e) {
       document.addEventListener("mouseup", this.handleOnMouseUp);
       document.addEventListener("mousemove", this.handleOnMouseMove)
-      console.log("inDrag: true")
       this.setState({
         inDrag: true,
         prevMouse: {x: e.pageX, y: e.pageY},
         offset: {dx: 0, dy: 0}
       })
     }
+
 
     handleOnMouseMove(e) {
       if (this.state.inDrag) {

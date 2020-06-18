@@ -29,14 +29,17 @@ export const baseStyles = {
 
   solveButton: {
     width:150,
-    height:50,
-    position:'relative',
-    top: '17px',
+    height:50, 
+    margin: 'auto',
+    display: 'block'
   },
 
   board: {
     backgroundColor: '#84a9ac',
+    display: 'block',
+    margin: 'auto',
     width: 150,
-    height: 150
-  }
+    height: 150,
+    position: 'relative',
+  },
 }
