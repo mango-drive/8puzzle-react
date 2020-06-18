@@ -1,11 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from "react";
 
 // https://usehooks.com/useAnimation/
-export function useAnimation(
-  easingName = 'linear',
-  duration = 500,
-  delay = 0
-) {
+export function useAnimation(easingName = "linear", duration = 500, delay = 0) {
   // The useAnimationTimer hook calls useState every animation frame ...
   // ... giving us elapsed time and causing a rerender as frequently ...
   // ... as possible for a smooth animation.
@@ -13,7 +9,7 @@ export function useAnimation(
   // Amount of specified duration elapsed on a scale from 0 - 1
   const n = Math.min(1, elapsed / duration);
   // Return altered value based on our specified easing function
-  
+
   return easing[easingName](n);
 }
 
@@ -21,10 +17,10 @@ export function useAnimation(
 // https://github.com/streamich/ts-easing/blob/master/src/index.ts
 // Hardcode here or pull in a dependency
 const easing = {
-  linear: n => n,
-  elastic: n =>
+  linear: (n) => n,
+  elastic: (n) =>
     n * (33 * n * n * n * n - 106 * n * n * n + 126 * n * n - 67 * n + 15),
-  inExpo: n => Math.pow(2, 10 * (n - 1))
+  inExpo: (n) => Math.pow(2, 10 * (n - 1)),
 };
 
 function useAnimationTimer(duration = 1000, delay = 0) {
