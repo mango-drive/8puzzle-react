@@ -11,27 +11,6 @@ import { Tile, Slot } from "./Tile";
 import { motion } from "framer-motion";
 import { parseSolution, solve } from "../utils/solve.js";
 
-export const Game = () => {
-  const handleOnSolve = () => {
-    console.log("Solve button clicked");
-  };
-
-  return (
-    <div style={baseStyles.game}>
-      <Board />
-      <SolveButton handleOnSolve={handleOnSolve} />
-    </div>
-  );
-};
-
-const SolveButton = (handleOnSolve) => {
-  console.log(handleOnSolve);
-  return (
-    <button onClick={handleOnSolve} style={baseStyles.solveButton}>
-      Solve
-    </button>
-  );
-};
 
 export const Board = (onAnimationComplete) => {
   const [solving, setSolving] = useState(false);
@@ -65,7 +44,7 @@ export const Board = (onAnimationComplete) => {
       setTimeout(resolve, ms);
     });
   }
-
+  S
   const handleOnAnimationComplete = (idx) => {
     const newBoard = deepCopy(board);
     const slotIdx = findZero(newBoard);
@@ -88,6 +67,7 @@ const BoardRepresentation = (props) => {
   const tileSize = 50;
 
   const { board, movingTile } = props;
+
 
   const [clickedTile, setClickedTile] = useState(null);
 

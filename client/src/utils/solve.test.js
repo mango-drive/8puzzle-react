@@ -142,9 +142,14 @@ test("solves the simplest board", () => {
     [0, 3],
   ];
 
-  const board = new Board(tiles);
-  const solution = solve(board);
-  console.log(solution);
+  const solutionState = [
+    [1, 2],
+    [3, 0],
+  ];
+
+  const solution = solve(tiles);
+  const lastState = solution[solution.length - 1].board.tiles;
+  expect(lastState).toEqual(solutionState);
 });
 
 test("solves board", () => {
@@ -154,7 +159,5 @@ test("solves board", () => {
     [6, 7, 8],
   ];
 
-  const board = new Board(tiles);
-  const solution = solve(board);
-  console.log(solution[solution.length - 1].board.tiles);
+  const solution = solve(tiles);
 });

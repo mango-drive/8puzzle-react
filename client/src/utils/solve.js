@@ -53,9 +53,10 @@ export const generateNeighborArrays = (arr, idx) => {
 export class Board {
   constructor(tiles) {
     this._tiles = tiles;
+    console.log(this._tiles);
     this._emptySlot = findZero(this._tiles);
   }
-
+  
   get hamming() {
     return hamming(this._tiles);
   }

@@ -41,11 +41,16 @@ export const neighboursOfIdx = (arr, { i, j }) => {
   return neighbours;
 };
 
+
 export const areNeighbours = (idx1, idx2) => {
   if (idx1.i === idx2.i) return Math.abs(idx1.j - idx2.j) === 1;
   if (idx1.j === idx2.j) return Math.abs(idx1.i - idx2.i) === 1;
   return false;
 };
+
+export const filter2dIdx = (arr, comparator) => {
+  return arr.map((row, i) => row.filter((el, j) => comparator({i, j})))
+}
 
 export const isValidIdx = (arr, { i, j }) => {
   const n = arr.length;
