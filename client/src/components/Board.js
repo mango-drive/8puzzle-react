@@ -2,20 +2,18 @@ import React, { useRef, useState, useEffect } from "react";
 import { createGridLayout, findZero, areNeighbours, swap } from "../utils/util";
 import { cellSize, baseStyles } from "../styles";
 import { motion } from "framer-motion";
-import {deepCopy} from '../utils/util'
+import { deepCopy } from "../utils/util";
 
 export class Board extends React.Component {
   constructor(props) {
     super(props);
-    this.dimension = 4;
+    this.dimension = 2;
     // TODO get this from style
     this.layout = createGridLayout(this.dimension, cellSize);
 
     const tiles = [
-      [1, 2, 3, 9],
-      [4, 5, 6, 10],
-      [0, 7, 8, 11],
-      [12, 13, 14, 15],
+      [1, 0],
+      [3,4]
     ];
     const slot = findZero(tiles);
 
@@ -26,11 +24,10 @@ export class Board extends React.Component {
   }
 
   updatePosition = (index) => {
-    console.log(index, "clicked");
+
     let { slot } = this.state;
     if (areNeighbours(slot, index)) {
-      let newTiles = deepCopy(this.state.tiles)
-      console.log(newTiles)
+      const newTiles = deepCopy(this.state.tiles);
       // swap the values
       swap(newTiles, slot, index);
       // store new slot index
@@ -55,31 +52,44 @@ export class Board extends React.Component {
 }
 
 const BoardLayout = ({ tiles, layout, onTileClick }) => {
-  return tiles.map((row, i) => {
-    return row.map((value, j) => {
-      const pos = layout[i][j];
+  const tileList = [];
+  tiles.forEach((row, i) => {
+    row.forEach((value, j) => {
+      tileList.push(
+        <Tile
+          key={value.toString()}
+          pos={layout[i][j]}
+          value={value}
+          onTileClick={() => onTileClick({ i, j })}
+        />
+      )
+    })
+  })
 
-      const animation = { x: pos[0], y: pos[1] };
-          console.log("animation for ", value, " is", animation)
-      return (
-        <motion.div key={value} animate={animation} onTap={() => onTileClick({i, j})}>
-          <Tile
-            key={value}
+  console.log(tileList)
 
-            value={value}
-          />
-        </motion.div>
-      );
-    });
-  });
+  return tileList;
 };
 
-const Tile = ({ value }) => {
+const Tile = ({ value, pos, onTileClick }) => {
+
+
   let style = value ? baseStyles.tile : baseStyles.blankTile;
+  const [x,y] = pos;
+
+  const prevPosRef = useRef();
+  useEffect(() => {
+    console.log("useEffect called for ", value)
+    prevPosRef.current = pos;
+  });
+  const prevPos = prevPosRef.current;
+  const [xPrev, yPrev] = prevPos ? prevPos : [null, null];
+  console.log("prevPos for ", value, ": ", prevPos)
+  const animation = prevPos ? { x, y } : {x, y};
 
   return (
-    <div style={style}>
+    <motion.div style={style} onTap={onTileClick} animate={animation}>
       <div style={baseStyles.tileContent}>{value}</div>
-    </div>
+    </motion.div>
   );
 };
