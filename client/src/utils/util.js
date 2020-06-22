@@ -1,13 +1,11 @@
 export const createGridLayout = (n, cellSize) => {
   const layout = [];
-  for (let i = 0; i <= n; i++) {
-    const row = []
-    for (let j = 0; j <= n; j++) {
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
       const x = j * cellSize;
       const y = i * cellSize;
-      row.push([x, y]);
+      layout.push([x, y]);
     }
-    layout.push(row);
   }
   return layout;
 };
@@ -61,10 +59,12 @@ export const curriedComparator = (idx1, comparator) => {
   };
 };
 
-export const areNeighbours = (idx1, idx2) => {
-  if (idx1.i === idx2.i) return Math.abs(idx1.j - idx2.j) === 1;
-  if (idx1.j === idx2.j) return Math.abs(idx1.i - idx2.i) === 1;
-  return false;
+export const areNeighbours = (idx1, idx2, dimension) => {
+  const diff = Math.abs(idx1 - idx2);
+  console.log(diff, dimension)
+  const rowNeighbourDiff = 1;
+  const colNeighbourDiff = dimension;
+  return (diff === rowNeighbourDiff || diff === colNeighbourDiff)
 };
 
 export const isValidIdx = (arr, { i, j }) => {
