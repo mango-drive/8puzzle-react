@@ -1,4 +1,4 @@
-export const cellSize = 80;
+export const cellSize = 70;
 
 export const baseStyles = {
 
@@ -33,14 +33,15 @@ export const baseStyles = {
   },
 
   solveButton: {
-    margin: "auto",
-    display: "block",
+    width : cellSize * 3,
+    height: cellSize,
+    position: "absolute",
+    display: "inline",
+    margin: 'auto',
+    top: cellSize * 5
   },
 
   board: {
     backgroundColor: "#84a9ac",
-    display: "block",
-    margin: "auto",
-    position: "relative",
   },
 };
