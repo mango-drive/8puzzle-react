@@ -1,9 +1,20 @@
+export const cellSize = 80;
+
 export const baseStyles = {
+
   tile: {
-    position: "absolute",
-    backgroundColor: "#bac964",
-    border: "0.5px solid black",
-    borderRadius: "7px",
+    width: cellSize*0.9,
+    height: cellSize*0.9,
+    display: 'inline-block',
+    borderRadius: '4px',
+    background: 'white',
+    boxShadow: 'rgba(0,0,0,0.2) 0 1px 2px 0',
+    color: "#333",
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'translate 0.3s ease-in',
+    position: 'absolute'
   },
 
   tileContent: {

@@ -1,132 +1,85 @@
-import React, { useState } from "react";
-import { baseStyles } from "../styles";
-import {
-  findZero,
-  createDefaultPosition,
-  swap,
-  areNeighbours,
-  deepCopy,
-} from "../utils/util";
-import { Tile, Slot } from "./Tile";
+import React, { useRef, useState, useEffect } from "react";
+import { createGridLayout, findZero, areNeighbours, swap } from "../utils/util";
+import { cellSize, baseStyles } from "../styles";
 import { motion } from "framer-motion";
-import { parseSolution, solve } from "../utils/solve.js";
+import {deepCopy} from '../utils/util'
 
+export class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    this.dimension = 4;
+    // TODO get this from style
+    this.layout = createGridLayout(this.dimension, cellSize);
 
-export const Board = (onAnimationComplete) => {
-  const [solving, setSolving] = useState(false);
-  const [movingTile, setMovingTile] = useState(null);
-  const [board, setBoard] = useState([
-    [1, 2, 3],
-    [4, 0, 5],
-    [6, 7, 8],
-  ]);
+    const tiles = [
+      [1, 2, 3, 9],
+      [4, 5, 6, 10],
+      [0, 7, 8, 11],
+      [12, 13, 14, 15],
+    ];
+    const slot = findZero(tiles);
 
-  async function animateSolution() {
-    setSolving(true);
+    this.state = {
+      tiles,
+      slot,
+    };
+  }
 
-    const solution = parseSolution(solve(board));
-
-    // for each in solution
-    for (const move of solution) {
-      setMovingTile(move);
-      await wait(100);
-      const newBoard = board;
-      const slotIdx = findZero(newBoard);
-      swap(newBoard, slotIdx, move);
-      setBoard(newBoard);
+  updatePosition = (index) => {
+    console.log(index, "clicked");
+    let { slot } = this.state;
+    if (areNeighbours(slot, index)) {
+      let newTiles = deepCopy(this.state.tiles)
+      console.log(newTiles)
+      // swap the values
+      swap(newTiles, slot, index);
+      // store new slot index
+      slot = index;
+      this.setState({ tiles: newTiles, slot });
     }
-
-    setSolving(false);
-  }
-
-  async function wait(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
-  S
-  const handleOnAnimationComplete = (idx) => {
-    const newBoard = deepCopy(board);
-    const slotIdx = findZero(newBoard);
-    swap(newBoard, slotIdx, idx);
-    setBoard(newBoard);
   };
 
-  return (
-    <div style={baseStyles.board}>
-      <BoardRepresentation
-        board={board}
-        movingTile={movingTile}
-        handleOnAnimationComplete={handleOnAnimationComplete}
-      />
-    </div>
-  );
+  render() {
+    const { tiles } = this.state;
+
+    return (
+      <div style={baseStyles.board}>
+        <BoardLayout
+          onTileClick={this.updatePosition}
+          tiles={tiles}
+          layout={this.layout}
+        />
+      </div>
+    );
+  }
+}
+
+const BoardLayout = ({ tiles, layout, onTileClick }) => {
+  return tiles.map((row, i) => {
+    return row.map((value, j) => {
+      const pos = layout[i][j];
+
+      const animation = { x: pos[0], y: pos[1] };
+          console.log("animation for ", value, " is", animation)
+      return (
+        <motion.div key={value} animate={animation} onTap={() => onTileClick({i, j})}>
+          <Tile
+            key={value}
+
+            value={value}
+          />
+        </motion.div>
+      );
+    });
+  });
 };
 
-const BoardRepresentation = (props) => {
-  const tileSize = 50;
+const Tile = ({ value }) => {
+  let style = value ? baseStyles.tile : baseStyles.blankTile;
 
-  const { board, movingTile } = props;
-
-
-  const [clickedTile, setClickedTile] = useState(null);
-
-  const slotIdx = findZero(board);
-  const slotPosition = createDefaultPosition(slotIdx, tileSize);
-
-  const isSlot = ({ i, j }) => i === slotIdx.i && j === slotIdx.j;
-  const isMove = ({ i, j }) =>
-    movingTile && i === movingTile.i && j === movingTile.j;
-  const isClicked = ({ i, j }) =>
-    clickedTile && i === clickedTile.i && j === clickedTile.j;
-
-  const handleOnTileClick = (idx) => {
-    setClickedTile(idx);
-  };
-
-  const renderBoard = () => {
-    return board.map((row, i) => {
-      return row.map((value, j) => {
-        const idx = { i, j };
-        const innerStyle = createDefaultPosition(idx, tileSize);
-        const tile = { value, innerStyle };
-
-        if (isSlot(idx)) {
-          return <Slot key={0} {...tile} position={slotPosition} />;
-        }
-
-        if (isMove(idx) || isClicked(idx)) {
-          const animation = {
-            x: slotPosition.left - innerStyle.left,
-            y: slotPosition.top - innerStyle.top,
-          };
-
-          return (
-            <motion.div
-              animate={animation}
-              key={tile.value}
-              onAnimationComplete={() => {
-                props.handleOnAnimationComplete(idx);
-                setClickedTile(null);
-              }}
-            >
-              <Tile key={tile.value} {...tile}></Tile>
-            </motion.div>
-          );
-        }
-
-        if (areNeighbours(slotIdx, idx)) {
-          return (
-            <div key={tile.value} onClick={() => handleOnTileClick(idx)}>
-              <Tile {...tile} />
-            </div>
-          );
-        } else {
-          return <Tile key={tile.value} {...tile} />;
-        }
-      });
-    });
-  };
-
-  return <div>{renderBoard()}</div>;
+  return (
+    <div style={style}>
+      <div style={baseStyles.tileContent}>{value}</div>
+    </div>
+  );
 };

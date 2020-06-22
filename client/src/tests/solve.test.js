@@ -5,7 +5,7 @@ import {
   hamming,
   Board,
   solve,
-} from "./solve";
+} from "../utils/solve";
 
 test("calculates hamming distance", () => {
   let tiles = [
@@ -150,14 +150,4 @@ test("solves the simplest board", () => {
   const solution = solve(tiles);
   const lastState = solution[solution.length - 1].board.tiles;
   expect(lastState).toEqual(solutionState);
-});
-
-test("solves board", () => {
-  let tiles = [
-    [1, 2, 3],
-    [4, 0, 5],
-    [6, 7, 8],
-  ];
-
-  const solution = solve(tiles);
 });

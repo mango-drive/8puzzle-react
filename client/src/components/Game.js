@@ -1,3 +1,4 @@
+import React from 'react'
 import { baseStyles } from '../styles'
 import { Board } from './Board'
 import { SolveButton } from './SolveButton.js'
