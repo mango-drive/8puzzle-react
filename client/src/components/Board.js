@@ -40,6 +40,7 @@ export const Board = ({ props }) => {
   };
 
   const updatePosition = (index) => {
+    console.log("clicked");
     let { slot, tiles } = state;
     if (areNeighbours(slot, index, dimension)) {
       // swap the values
@@ -76,19 +77,8 @@ const Tile = ({ value, pos, onTileClick }) => {
   let style = value ? baseStyles.tile : baseStyles.blankTile;
   const [x, y] = pos;
 
-  const animation = { x, y };
-
-  const variants = {
-    move: { x, y },
-  };
-
   return (
-    <motion.div
-      style={style}
-      onTap={onTileClick}
-      animate={"move"}
-      variants={variants}
-    >
+    <motion.div style={style} onTap={onTileClick} animate={{ x, y }}>
       <div style={baseStyles.tileContent}>{value}</div>
     </motion.div>
   );

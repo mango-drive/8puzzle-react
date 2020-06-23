@@ -48,45 +48,43 @@ export const generateNeighborArrays = (arr, idx) => {
     neighborArrays.push(neigborArray);
   }
   return neighborArrays;
+  // TODO: return object that contains the move performed
+  // to create the neighbouring board and the neighbouring
+  // board itself.
+  // This will allow the solver to store the move into 
+  // the solution data structure, and will remove the need
+  // to parse the solution at the end of the solve.
 };
 
 export class Board {
   constructor(tiles) {
-    this._tiles = tiles;
-    this._emptySlot = findZero(this._tiles);
+    this.tiles = tiles;
+    this.emptySlot = findZero(this.tiles);
   }
   
-  get hamming() {
-    return hamming(this._tiles);
-  }
-
   get manhattan() {
-    return manhattan(this._tiles);
+    return manhattan(this.tiles);
   }
 
   get neighbours() {
-    const neighbourTiles = generateNeighborArrays(this._tiles, this._emptySlot);
+    const neighbourTiles = generateNeighborArrays(this.tiles, this.emptySlot);
     const neighbourBoards = neighbourTiles.map((tiles) => new Board(tiles));
     return neighbourBoards;
   }
 
   isGoal() {
-    return isGoal(this._tiles);
+    return isGoal(this.tiles);
   }
 
   get dimension() {
-    return this._tiles.length;
-  }
-
-  get tiles() {
-    return this._tiles;
+    return this.tiles.length;
   }
 
   isEqual(to) {
     if (this.dimension !== to.dimension) return false;
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = 0; j < this.dimension; ++j) {
-        if (this._tiles[i][j] !== to.tiles[i][j]) return false;
+        if (this.tiles[i][j] !== to.tiles[i][j]) return false;
       }
     }
     return true;
@@ -95,25 +93,13 @@ export class Board {
 
 class SearchNode {
   constructor(board, moves, prev) {
-    this._board = board;
-    this._moves = moves;
-    this._prev = prev;
+    this.board = board;
+    this.moves = moves;
+    this.prev = prev;
   }
 
   priority() {
-    return this._board.manhattan + this._moves;
-  }
-
-  get board() {
-    return this._board;
-  }
-
-  get moves() {
-    return this._moves;
-  }
-
-  get prev() {
-    return this._prev;
+    return this.board.manhattan + this.moves;
   }
 }
 
@@ -122,12 +108,11 @@ const priorityCompare = (node1, node2) => {
 };
 
 export const solve = (tiles) => {
-  console.log("Solve", tiles)
+
   let solutionNode = null;
   const initialBoard = new Board(tiles);
   const initialNode = new SearchNode(initialBoard, 0, null);
   const minPQ = new PriorityQueue([initialNode], priorityCompare);
-  console.log("Initial board", initialBoard)
 
   while (true) {
 
@@ -159,7 +144,7 @@ export const solve = (tiles) => {
   return parseSolution(solution);
 };
 
-// It's probably more efficient to store the tile to move
+// TODO: It's probably more efficient to store the tile to move
 // during solve, but this was the quick and easy way
 export const parseSolution = (solution) => {
   const tilesToMove = [];

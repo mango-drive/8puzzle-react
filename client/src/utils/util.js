@@ -1,27 +1,5 @@
 import { solve } from "./solve";
 
-export const createGridLayout = (n, cellSize) => {
-  const layout = [];
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      const x = j * cellSize;
-      const y = i * cellSize;
-      layout.push([x, y]);
-    }
-  }
-  return layout;
-};
-
-export const initialiseStyles = (arr, size) => {
-  let styles = arr.map((tileRow, i) => {
-    return tileRow.map((tile, j) => {
-      const top = i * size;
-      const left = j * size;
-      return { top: top, left: left, width: size };
-    });
-  });
-  return styles;
-};
 
 export const findZero = (arr) => {
   let emptyIdx;
@@ -86,9 +64,6 @@ export const deepCopy = (arr) => {
   return newArray;
 };
 
-export const createDefaultPosition = ({ i, j }, size) => {
-  return { top: i * size, left: j * size };
-};
 
 export const createBounds = (tilePos, slotPos) => {
   return {

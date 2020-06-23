@@ -1,20 +1,16 @@
 export default class PriorityQueue {
     constructor(data = [], comparator) {
-        this._data = data;
+        this.data = data;
         this.comparator = comparator;
         this.heapify();
     }
 
     size() {
-        return this._data.length;
-    }
-
-    get data() {
-        return this._data;
+        return this.data.length;
     }
 
     isEmpty() {
-        return this._data.length === 0;
+        return this.data.length === 0;
     }
 
     heapify() {
@@ -29,7 +25,7 @@ export default class PriorityQueue {
         while(pos > 0) {
             let parent = Math.floor((pos-1)/2);
             // if the child is larger than the parent, we are done
-            if (this.comparator(this._data[pos], this._data[parent]) > 0)
+            if (this.comparator(this.data[pos], this.data[parent]) > 0)
                 break;
             
             // otherwise, swap child and parent to satisfy minHeap property
@@ -40,7 +36,7 @@ export default class PriorityQueue {
 
     insert(value) {
         const i = this.size();
-        this._data.push(value);
+        this.data.push(value);
         this.bubbleUp(i);
     }
 
@@ -55,7 +51,7 @@ export default class PriorityQueue {
 
             let swapped = false;
             for (const cPos of children) {
-                if (this.comparator(this._data[pos], this._data[cPos]) > 0) {
+                if (this.comparator(this.data[pos], this.data[cPos]) > 0) {
                     this.swap(pos, cPos)
                     pos = cPos;
                     swapped = true;
@@ -72,14 +68,14 @@ export default class PriorityQueue {
         const last = this.size() - 1;
         this.swap(first, last);
         // the previous root is now at the back of the array
-        const value = this._data.pop();
+        const value = this.data.pop();
         this.bubbleDown(first);
         return value;
     }
 
     swap(i, j) {
-        const temp = this._data[i];
-        this._data[i] = this._data[j];
-        this._data[j] = temp;
+        const temp = this.data[i];
+        this.data[i] = this.data[j];
+        this.data[j] = temp;
     }
 }
