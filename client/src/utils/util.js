@@ -1,6 +1,5 @@
 import { solve } from "./solve";
 
-
 export const findZero = (arr) => {
   let emptyIdx;
   arr.forEach((row, i) => {
@@ -33,7 +32,6 @@ export const neighboursOfIdx = (arr, { i, j }) => {
   return neighbours;
 };
 
-
 export const areNeighbours = (idx1, idx2, dimension) => {
   const diff = Math.abs(idx1 - idx2);
   const rowNeighbourDiff = 1;
@@ -63,7 +61,6 @@ export const deepCopy = (arr) => {
   });
   return newArray;
 };
-
 
 export const createBounds = (tilePos, slotPos) => {
   return {
@@ -104,4 +101,3 @@ export const getSolution = (tiles, dimension) => {
   const squareArr = squarify(tiles, dimension);
   return solve(squareArr);
 };
-

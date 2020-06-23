@@ -5,7 +5,7 @@ import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 
-const tiles = [1, 2, 3, 4, 0, 5, 6, 7, 8];
+const tiles = [10, 9, 8, 1, 2, 3, 5, 4, 0, 6, 7, 11, 12, 13, 14, 15,];
 
 export const Board = ({ props }) => {
   const slot = tiles.indexOf(0);
