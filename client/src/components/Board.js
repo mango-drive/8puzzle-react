@@ -75,10 +75,21 @@ const BoardLayout = ({ tiles, layout, onTileClick }) => {
 const Tile = ({ value, pos, onTileClick }) => {
   let style = value ? baseStyles.tile : baseStyles.blankTile;
   const [x, y] = pos;
+
   const animation = { x, y };
 
+  const variants = {
+    move: { x, y },
+  };
+
   return (
-    <motion.div style={style} onTap={onTileClick} animate={animation}>
+    <motion.div
+      style={style}
+      onTap={onTileClick}
+      animate={"move"}
+      variants={variants}
+      initial={false}
+    >
       <div style={baseStyles.tileContent}>{value}</div>
     </motion.div>
   );
