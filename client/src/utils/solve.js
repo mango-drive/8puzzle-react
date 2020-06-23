@@ -60,10 +60,7 @@ export class Board {
   constructor(tiles) {
     this.tiles = tiles;
     this.emptySlot = findZero(this.tiles);
-  }
-  
-  get manhattan() {
-    return manhattan(this.tiles);
+    this.manhattan = manhattan(this.tiles)
   }
 
   get neighbours() {
