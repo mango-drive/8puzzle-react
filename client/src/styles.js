@@ -1,5 +1,17 @@
 export const cellSize = 70;
 
+export const createGridLayout = (n, cellSize) => {
+  const layout = [];
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      const x = j * cellSize;
+      const y = i * cellSize;
+      layout.push([x, y]);
+    }
+  }
+  return layout;
+};
+
 export const baseStyles = {
 
   tile: {

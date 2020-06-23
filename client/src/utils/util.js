@@ -55,15 +55,9 @@ export const neighboursOfIdx = (arr, { i, j }) => {
   return neighbours;
 };
 
-export const curriedComparator = (idx1, comparator) => {
-  return (idx2) => {
-    return comparator(idx1, idx2);
-  };
-};
 
 export const areNeighbours = (idx1, idx2, dimension) => {
   const diff = Math.abs(idx1 - idx2);
-  console.log(diff, dimension);
   const rowNeighbourDiff = 1;
   const colNeighbourDiff = dimension;
   return diff === rowNeighbourDiff || diff === colNeighbourDiff;

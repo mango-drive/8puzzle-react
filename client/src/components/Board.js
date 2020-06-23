@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import { createGridLayout, areNeighbours, getSolution } from "../utils/util";
-import { cellSize, baseStyles } from "../styles";
+import { areNeighbours, getSolution } from "../utils/util";
+
+import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
-import { deepCopy } from "../utils/util";
 import { useInterval } from "../hoc/useInterval";
-import { solve } from "../utils/solve";
 
 const tiles = [1, 2, 3, 4, 0, 5, 6, 7, 8];
+
 export const Board = ({ props }) => {
   const slot = tiles.indexOf(0);
   const [state, setState] = useState({
@@ -88,7 +88,6 @@ const Tile = ({ value, pos, onTileClick }) => {
       onTap={onTileClick}
       animate={"move"}
       variants={variants}
-      initial={false}
     >
       <div style={baseStyles.tileContent}>{value}</div>
     </motion.div>
