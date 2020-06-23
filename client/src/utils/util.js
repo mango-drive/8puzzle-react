@@ -1,3 +1,5 @@
+import { solve } from "./solve";
+
 export const createGridLayout = (n, cellSize) => {
   const layout = [];
   for (let i = 0; i < n; i++) {
@@ -61,10 +63,10 @@ export const curriedComparator = (idx1, comparator) => {
 
 export const areNeighbours = (idx1, idx2, dimension) => {
   const diff = Math.abs(idx1 - idx2);
-  console.log(diff, dimension)
+  console.log(diff, dimension);
   const rowNeighbourDiff = 1;
   const colNeighbourDiff = dimension;
-  return (diff === rowNeighbourDiff || diff === colNeighbourDiff)
+  return diff === rowNeighbourDiff || diff === colNeighbourDiff;
 };
 
 export const isValidIdx = (arr, { i, j }) => {
@@ -116,3 +118,21 @@ export const dragWithinBounds = (delta, position, bounds) => {
 
   return position;
 };
+
+const squarify = (arr1D, dimension) => {
+  const arr2D = [];
+  for (let i = 0; i < dimension; i++) {
+    const row = [];
+    for (let j = 0; j < dimension; j++) {
+      row.push(arr1D[i * dimension + j]);
+    }
+    arr2D.push(row);
+  }
+  return arr2D;
+};
+
+export const getSolution = (tiles, dimension) => {
+  const squareArr = squarify(tiles, dimension);
+  return solve(squareArr);
+};
+

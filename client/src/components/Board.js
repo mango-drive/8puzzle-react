@@ -1,50 +1,60 @@
 import React, { useRef, useState, useEffect } from "react";
-import { createGridLayout, findZero, areNeighbours } from "../utils/util";
+import { createGridLayout, areNeighbours, getSolution } from "../utils/util";
 import { cellSize, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { deepCopy } from "../utils/util";
-import {useInterval} from "../hoc/useInterval"
+import { useInterval } from "../hoc/useInterval";
+import { solve } from "../utils/solve";
 
-const tiles = [1, 0, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+const tiles = [1, 2, 3, 4, 0, 5, 6, 7, 8];
 export const Board = ({ props }) => {
-
   const slot = tiles.indexOf(0);
   const [state, setState] = useState({
     tiles,
-    slot
+    slot,
   });
 
-  const dimension = Math.sqrt( state.tiles.length );
+  const dimension = Math.sqrt(state.tiles.length);
   const layout = createGridLayout(dimension, cellSize);
 
-  const [solve, setSolve] = useState(false);
+  const [solution, setSolution] = useState();
+  const [animateSolution, setAnimateSolution] = useState(false);
 
+  useInterval(
+    () => {
+      if (solution === undefined || solution.length == 0) {
+        setAnimateSolution(false);
+      } else {
+        const move = solution.shift();
+        let tile1d = move.i * dimension + move.j;
+        updatePosition(tile1d);
+      }
+    },
+    animateSolution ? 100 : null
+  );
 
-  useInterval(() => {
-    console.log("solving");
-  }, solve ? 500 : null)
-
-
-  const updatePosition = (index) => {
-    let { slot, tiles } = this.state;
-    if (areNeighbours(slot, index, this.dimension)) {
-      // swap the values
-      this.swap(tiles, slot, index);
-      // store new slot index
-      this.setState({ tiles, slot: index });
-    }
+  const onSolution = () => {
+    const { tiles } = state;
+    setSolution(getSolution(tiles, dimension));
+    setAnimateSolution(true);
   };
 
-  const swap = (arr, i, j) => {
-    const temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+  const updatePosition = (index) => {
+    let { slot, tiles } = state;
+    if (areNeighbours(slot, index, dimension)) {
+      // swap the values
+      swap(tiles, slot, index);
+      // store new slot index
+      setState({ tiles, slot: index });
+    }
   };
 
   return (
     <div style={baseStyles.board}>
       <BoardLayout onTileClick={updatePosition} tiles={tiles} layout={layout} />
-      <button style ={baseStyles.solveButton} onClick={() => setSolve(true)}>Solve</button>
+      <button style={baseStyles.solveButton} onClick={onSolution}>
+        Solve
+      </button>
     </div>
   );
 };
@@ -72,4 +82,10 @@ const Tile = ({ value, pos, onTileClick }) => {
       <div style={baseStyles.tileContent}>{value}</div>
     </motion.div>
   );
+};
+
+const swap = (arr, i, j) => {
+  const temp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = temp;
 };

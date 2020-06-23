@@ -122,12 +122,15 @@ const priorityCompare = (node1, node2) => {
 };
 
 export const solve = (tiles) => {
+  console.log("Solve", tiles)
   let solutionNode = null;
   const initialBoard = new Board(tiles);
   const initialNode = new SearchNode(initialBoard, 0, null);
   const minPQ = new PriorityQueue([initialNode], priorityCompare);
+  console.log("Initial board", initialBoard)
 
   while (true) {
+
     const currNode = minPQ.extract();
     const currBoard = currNode.board;
 
@@ -153,7 +156,7 @@ export const solve = (tiles) => {
     solution.unshift(currNode);
     currNode = currNode.prev;
   }
-  return solution;
+  return parseSolution(solution);
 };
 
 // It's probably more efficient to store the tile to move
