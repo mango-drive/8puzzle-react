@@ -5,6 +5,7 @@ import {
   hamming,
   Board,
   solve,
+  shuffle,
 } from "../utils/solve";
 
 test("calculates hamming distance", () => {
@@ -136,18 +137,6 @@ test("generates all arrays with element swapped with neighbours", () => {
   expect(rv).toEqual(expected);
 });
 
-test("solves the simplest board", () => {
-  let tiles = [
-    [1, 2],
-    [0, 3],
-  ];
+test("shuffles to a solvable state", () => {
 
-  const solutionState = [
-    [1, 2],
-    [3, 0],
-  ];
-
-  const solution = solve(tiles);
-  const lastState = solution[solution.length - 1].board.tiles;
-  expect(lastState).toEqual(solutionState);
 });

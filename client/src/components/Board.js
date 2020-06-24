@@ -5,7 +5,7 @@ import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 
-const tiles = [10, 9, 8, 1, 2, 3, 5, 4, 0, 6, 7, 11, 12, 13, 14, 15,];
+const tiles = [10, 9, 8, 1, 2, 3, 5, 4, 0, 6, 7, 11, 12, 13, 14, 15];
 
 export const Board = ({ props }) => {
   const slot = tiles.indexOf(0);
@@ -20,6 +20,8 @@ export const Board = ({ props }) => {
   const [solution, setSolution] = useState();
   const [animateSolution, setAnimateSolution] = useState(false);
 
+  const moveInterval = 100; // ms
+
   useInterval(
     () => {
       if (solution === undefined || solution.length == 0) {
@@ -30,7 +32,8 @@ export const Board = ({ props }) => {
         updatePosition(tile1d);
       }
     },
-    animateSolution ? 100 : null
+    // use the interval only when animating.
+    animateSolution ? moveInterval : null
   );
 
   const onSolution = () => {
@@ -40,7 +43,6 @@ export const Board = ({ props }) => {
   };
 
   const updatePosition = (index) => {
-    console.log("clicked");
     let { slot, tiles } = state;
     if (areNeighbours(slot, index, dimension)) {
       // swap the values

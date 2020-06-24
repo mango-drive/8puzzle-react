@@ -1,16 +1,4 @@
-import { findZero, createGridLayout } from "../utils/util";
-
-test("createGridLayout", () => {
-  const layout = createGridLayout(2, 10);
-  const expected = [
-    { x: 0, y: 0 },
-    { x: 10, y: 0 },
-    { x: 0, y: 10 },
-    { x: 10, y: 10 }
-  ];
-
-  expect(layout).toEqual(expected);
-});
+import { shuffle, findZero, createGridLayout } from "../utils/util";
 
 test("findZero", () => {
   const arr = [
@@ -19,4 +7,25 @@ test("findZero", () => {
   ];
   const zeroIdx = findZero(arr);
   expect(zeroIdx).toEqual({ i: 0, j: 1 });
+});
+
+test("shuffles an array", () => {
+  let permutations = {
+    "123": 0,
+    "132": 0,
+    "213": 0,
+    "231": 0,
+    "321": 0,
+    "312": 0,
+  };
+
+  for (let i = 0; i < 100000; i++) {
+    const arr = [1, 2, 3];
+    shuffle(arr);
+    permutations[arr.join("")]++;
+  }
+
+  for (let key in permutations) {
+    console.log(`${key}: ${permutations[key]}`);
+  }
 });

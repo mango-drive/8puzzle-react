@@ -105,7 +105,6 @@ const priorityCompare = (node1, node2) => {
 };
 
 export const solve = (tiles) => {
-
   let solutionNode = null;
   const initialBoard = new Board(tiles);
   const initialNode = new SearchNode(initialBoard, 0, null);
