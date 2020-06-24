@@ -51,7 +51,7 @@ export const generateNeighborArrays = (arr, idx) => {
   // TODO: return object that contains the move performed
   // to create the neighbouring board and the neighbouring
   // board itself.
-  // This will allow the solver to store the move into 
+  // This will allow the solver to store the move into
   // the solution data structure, and will remove the need
   // to parse the solution at the end of the solve.
 };
@@ -60,7 +60,7 @@ export class Board {
   constructor(tiles) {
     this.tiles = tiles;
     this.emptySlot = findZero(this.tiles);
-    this.manhattan = manhattan(this.tiles)
+    this.manhattan = manhattan(this.tiles);
   }
 
   get neighbours() {
@@ -111,7 +111,6 @@ export const solve = (tiles) => {
   const minPQ = new PriorityQueue([initialNode], priorityCompare);
 
   while (true) {
-
     const currNode = minPQ.extract();
     const currBoard = currNode.board;
 
@@ -152,3 +151,20 @@ export const parseSolution = (solution) => {
 
   return tilesToMove;
 };
+
+// A pair of tiles form an inversion if the values on tiles are
+// in reverse order of their appearance in goal state.
+
+export const countInversions = (tiles) => {
+  let invCount = 0;
+  for (let i = 0; i < tiles.length - 1; ++i) {
+    for (let j = i + 1; j < tiles.length; ++j) {
+      if (tiles[i] && tiles[j] && tiles[i] > tiles[j]) {
+        invCount++;
+      }
+    }
+  }
+  return invCount;
+};
+
+export const isSolvable = (tiles, dimension) => {};

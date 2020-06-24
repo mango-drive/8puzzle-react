@@ -111,4 +111,4 @@ export const shuffle = (array) => {
   }
 };
 
-export const newPuzzle = (dimension) => {};
+
