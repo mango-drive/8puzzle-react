@@ -1,4 +1,4 @@
-import { swap, neighboursOfIdx, deepCopy, findZero } from "./util";
+import { swap, neighboursOfIdx, deepCopy, findZero, shuffle } from "./util";
 
 import PriorityQueue from "./PriorityQueue";
 
@@ -154,7 +154,6 @@ export const parseSolution = (solution) => {
 
 // A pair of tiles form an inversion if the values on tiles are
 // in reverse order of their appearance in goal state.
-
 export const countInversions = (tiles) => {
   let invCount = 0;
   for (let i = 0; i < tiles.length - 1; ++i) {
@@ -167,4 +166,54 @@ export const countInversions = (tiles) => {
   return invCount;
 };
 
-export const isSolvable = (tiles, dimension) => {};
+export const rowOfZeroFromBottom = (tiles, dimension, emptyIndex=null) => {
+  if(!emptyIndex) emptyIndex = tiles.indexOf(0);
+  return dimension - Math.floor(emptyIndex / dimension);
+};
+
+const isEven = (num) => {
+  return num % 2 === 0;
+};
+
+// Test if a puzzle configuration is solvable.
+// https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+export const isSolvable = (
+  tiles,
+  dimension,
+  invCount = null,
+  emptyIndex = null
+) => {
+  if (!invCount) invCount = countInversions(tiles);
+  // counting from the bottom
+  // last = 1, second to last = 2
+  const emptyRow = rowOfZeroFromBottom(tiles, dimension, emptyIndex);
+
+  if (!isEven(dimension)) {
+    return isEven(invCount);
+  } else {
+    if (isEven(emptyRow)) {
+      return !isEven(invCount);
+    } else {
+      return isEven(invCount);
+    }
+  }
+};
+
+export const initializeRandomBoard = (dimension) => {
+  const tiles = [];
+  for (let i = 0; i < dimension * dimension; i++) {
+    tiles.push(i);
+  }
+
+  shuffle(tiles);
+  return tiles;
+}
+export const createSolvablePuzzle = (dimension) => {
+  let tiles;
+  do {
+    tiles = initializeRandomBoard(dimension);
+  } while(!isSolvable(tiles, dimension))
+
+  return tiles;
+
+};
