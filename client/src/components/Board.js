@@ -4,10 +4,21 @@ import { areNeighbours, getSolution } from "../utils/util";
 import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
+import { createSolvablePuzzle } from "../utils/solve";
 
-const tiles = [10, 9, 8, 1, 2, 3, 5, 4, 0, 6, 7, 11, 12, 13, 14, 15];
+const tiles = [3, 1, 0, 2];
 
-export const Board = ({ props }) => {
+export const Game = () => {
+  const tiles = createSolvablePuzzle(4);
+
+  return (
+    <div>
+      <Board tiles={tiles}></Board>
+    </div>
+  );
+};
+
+export const Board = ({ tiles }) => {
   const slot = tiles.indexOf(0);
   const [state, setState] = useState({
     tiles,
@@ -20,7 +31,7 @@ export const Board = ({ props }) => {
   const [solution, setSolution] = useState();
   const [animateSolution, setAnimateSolution] = useState(false);
 
-  const moveInterval = 100; // ms
+  const moveInterval = 200; // ms
 
   useInterval(
     () => {
