@@ -10,7 +10,10 @@ import {
   rowOfZeroFromBottom,
   countInversions,
   createSolvablePuzzle,
+  createGoalState,
+  initializeRandomBoard,
 } from "../utils/solve";
+import { squarify, getPathToSolution } from "../utils/util";
 
 test("calculates hamming distance", () => {
   let tiles = [
@@ -155,6 +158,7 @@ test("counts inversions", () => {
   expectedInversions = 49;
 
   expect(countInversions(arr)).toEqual(expectedInversions);
+  arr = [11, 10, 14, 6, 13, 0, 1, 4, 9, 5, 3, 15, 2, 7, 8, 12];
 });
 
 test("should find the row of the empty slot, counting from the bottom", () => {
@@ -165,20 +169,27 @@ test("should find the row of the empty slot, counting from the bottom", () => {
   board = [3, 0, 1, 2];
   rowOfZero = 2;
   expect(rowOfZeroFromBottom(board, 2)).toEqual(rowOfZero);
+
+  board = [11, 10, 14, 6, 13, 0, 1, 4, 9, 5, 3, 15, 2, 7, 8, 12];
+  rowOfZero = 3;
+  expect(rowOfZeroFromBottom(board, 4)).toEqual(rowOfZero);
+
+  board = [0, 1, 3, 4, 2, 5, 7, 8, 6];
+  rowOfZero = 3;
+  expect(rowOfZeroFromBottom(board, 3)).toEqual(rowOfZero);
 });
 
 test("should identify solvable board: odd dimension", () => {
-  let board = [1, 2, 3, 4, 5, 6, 7, 8, 0];
-  let expectedSolvable = true;
-  let dimension = Math.sqrt(board.length);
-  expect(isSolvable(board, dimension)).toEqual(expectedSolvable);
+  let boards = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 0],
+    [0, 1, 3, 4, 2, 5, 7, 8, 6],
+    [1, 7, 6, 4, 2, 8, 5, 3, 0],
+  ];
 
-  board = [0, 1, 3, 4, 2, 5, 7, 8, 6];
-  expectedSolvable = true;
-  dimension = Math.sqrt(board.length);
-  expect(isSolvable(board, dimension)).toEqual(expectedSolvable);
-
-  board = [0, 1, 3, 4, 2, 5, 7, 8, 6];
+  for (const b of boards) {
+    const dimension = Math.sqrt(b.length);
+    expect(isSolvable(b, dimension)).toEqual(true);
+  }
 });
 
 test("should identify solvable board: even dimension", () => {
@@ -187,6 +198,7 @@ test("should identify solvable board: even dimension", () => {
     [1, 2, 0, 3],
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0],
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 13, 14, 15, 12],
+    [11, 10, 14, 6, 13, 0, 1, 4, 9, 5, 3, 15, 2, 7, 8, 12],
   ];
 
   for (const b of boards) {
@@ -213,6 +225,8 @@ test("should identify unsolvable board: even dimension", () => {
     [0, 1, 2, 3],
     [3, 2, 1, 0],
     [3, 2, 4, 8, 1, 6, 0, 12, 5, 10, 7, 11, 9, 13, 14, 15],
+    [13, 10, 11, 6, 5, 7, 4, 8, 1, 12, 14, 9, 3, 15, 2, 0],
+    [3, 1, 13, 5, 9, 12, 0, 10, 15, 11, 7, 6, 8, 2, 4, 14]
   ];
 
   for (const b of boards) {
@@ -221,9 +235,25 @@ test("should identify unsolvable board: even dimension", () => {
   }
 });
 
-test("should create solvable boards", () => {
+test("should show equal distribution of odd and even solveable/unsolveable boards", () => {
   // create boards of different sizes.
-  const n = 10000;
+  const n = 100000;
+  const boards = [];
+  const min = 2;
+  const max = 6;
+  for (let dim = 2; dim < 5; dim++) {
+    let counts = [0, 0];
+    for (let i = 0; i < n; i++) {
+      const board = initializeRandomBoard(dim);
+      counts[+isSolvable(board)]++;
+    }
+    console.log("solveable, unsolveable counts for dim= ", dim, ": ", counts)
+  }
+});
+
+test("should create odd + even solvable boards", () => {
+  // create boards of different sizes.
+  const n = 100000;
   const boards = [];
   const min = 2;
   const max = 6;
@@ -237,4 +267,23 @@ test("should create solvable boards", () => {
     const dimension = Math.sqrt(b.length);
     expect(isSolvable(b, dimension)).toEqual(true);
   }
+});
+
+test("should solve odd and even solvable boards", () => {
+  // Generate 1000 small boards
+  let n = 1000;
+  const min = 2;
+  const max = 3;
+  for (let i = 0; i < n; i++) {
+    const dimension = Math.floor(Math.random() * (max - min) + min);
+    const board = createSolvablePuzzle(dimension);
+    const solution = getPathToSolution(board, dimension);
+    const lastState = solution[solution.length - 1].board.tiles;
+
+    expect(lastState).toEqual(squarify(createGoalState(dimension), dimension));
+  }
+
+  const board = [11, 10, 14, 6, 13, 0, 1, 4, 9, 5, 3, 15, 2, 7, 8, 12];
+  // const solution = getSolution(board, 4)
+  // const lastState = solution[solution.length - 1].board.tiles;
 });

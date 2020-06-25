@@ -107,12 +107,16 @@ const priorityCompare = (node1, node2) => {
 export const solve = (tiles) => {
   let solutionNode = null;
   const initialBoard = new Board(tiles);
+  console.log(initialBoard.tiles, initialBoard.dimension, initialBoard.emptySlot)
   const initialNode = new SearchNode(initialBoard, 0, null);
   const minPQ = new PriorityQueue([initialNode], priorityCompare);
 
-  while (true) {
+  const limit = 10;
+  let i = 0;
+  while (i < limit) {
     const currNode = minPQ.extract();
     const currBoard = currNode.board;
+    console.log(currBoard.tiles, currBoard.dimension, currBoard.emptySlot)
 
     if (currBoard.isGoal()) {
       solutionNode = currNode;
@@ -128,6 +132,8 @@ export const solve = (tiles) => {
       }
       minPQ.insert(new SearchNode(board, moves + 1, currNode));
     }
+
+    i++;
   }
 
   let currNode = solutionNode;
@@ -136,7 +142,7 @@ export const solve = (tiles) => {
     solution.unshift(currNode);
     currNode = currNode.prev;
   }
-  return parseSolution(solution);
+  return solution;
 };
 
 // TODO: It's probably more efficient to store the tile to move
@@ -168,7 +174,7 @@ export const countInversions = (tiles) => {
 
 export const rowOfZeroFromBottom = (tiles, dimension, emptyIndex=null) => {
   if(!emptyIndex) emptyIndex = tiles.indexOf(0);
-  return dimension - Math.floor(emptyIndex / dimension);
+  return dimension - Math.floor(emptyIndex / dimension) ;
 };
 
 const isEven = (num) => {
@@ -179,11 +185,12 @@ const isEven = (num) => {
 // https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
 export const isSolvable = (
   tiles,
-  dimension,
+  dimension=null,
   invCount = null,
   emptyIndex = null
 ) => {
   if (!invCount) invCount = countInversions(tiles);
+  if(!dimension) dimension = Math.sqrt(tiles.length);
   // counting from the bottom
   // last = 1, second to last = 2
   const emptyRow = rowOfZeroFromBottom(tiles, dimension, emptyIndex);
@@ -199,14 +206,17 @@ export const isSolvable = (
   }
 };
 
-export const initializeRandomBoard = (dimension) => {
+export const createGoalState = (dimension) => {
   const tiles = [];
-  for (let i = 0; i < dimension * dimension; i++) {
+  for (let i = 1; i < dimension * dimension; i++) {
     tiles.push(i);
   }
-
-  shuffle(tiles);
+  tiles.push(0); // empty slot in last position
   return tiles;
+
+}
+export const initializeRandomBoard = (dimension) => {
+  return shuffle(createGoalState(dimension));
 }
 export const createSolvablePuzzle = (dimension) => {
   let tiles;

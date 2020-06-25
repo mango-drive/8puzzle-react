@@ -1,4 +1,4 @@
-import { solve } from "./solve";
+import { parseSolution, solve } from "./solve";
 
 export const findZero = (arr) => {
   let emptyIdx;
@@ -85,7 +85,7 @@ export const dragWithinBounds = (delta, position, bounds) => {
   return position;
 };
 
-const squarify = (arr1D, dimension) => {
+export const squarify = (arr1D, dimension) => {
   const arr2D = [];
   for (let i = 0; i < dimension; i++) {
     const row = [];
@@ -97,9 +97,9 @@ const squarify = (arr1D, dimension) => {
   return arr2D;
 };
 
-export const getSolution = (tiles, dimension) => {
+export const getPathToSolution = (tiles, dimension) => {
   const squareArr = squarify(tiles, dimension);
-  return solve(squareArr);
+  return parseSolution(solve(squareArr));
 };
 
 export const shuffle = (array) => {
@@ -109,6 +109,8 @@ export const shuffle = (array) => {
     let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
     [array[i], array[j]] = [array[j], array[i]];
   }
+
+  return array;
 };
 
 

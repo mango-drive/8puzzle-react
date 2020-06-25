@@ -1,15 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
-import { areNeighbours, getSolution } from "../utils/util";
+import { areNeighbours, getPathToSolution } from "../utils/util";
 
 import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
 
-const tiles = [3, 1, 0, 2];
 
 export const Game = () => {
-  const tiles = createSolvablePuzzle(4);
+  const tiles = createSolvablePuzzle(3);
 
   return (
     <div>
@@ -31,7 +30,7 @@ export const Board = ({ tiles }) => {
   const [solution, setSolution] = useState();
   const [animateSolution, setAnimateSolution] = useState(false);
 
-  const moveInterval = 200; // ms
+  const moveInterval = 100; // ms
 
   useInterval(
     () => {
@@ -48,8 +47,9 @@ export const Board = ({ tiles }) => {
   );
 
   const onSolution = () => {
+    console.log("Get solution")
     const { tiles } = state;
-    setSolution(getSolution(tiles, dimension));
+    setSolution(getPathToSolution(tiles, dimension));
     setAnimateSolution(true);
   };
 
