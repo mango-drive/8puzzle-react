@@ -60,7 +60,7 @@ export const baseStyles = {
     backgroundColor: "#84a9ac",
     // height: cellSize *3,
     // width: cellSize * 3,
-    textAlign: "center",
-    margin: 'auto'
+    display: 'flex',
+    justifyContent: 'center',
   },
 };
