@@ -11,9 +11,7 @@ export const Game = () => {
   const tiles = createSolvablePuzzle(3);
 
   return (
-    <div>
       <Board tiles={tiles}></Board>
-    </div>
   );
 };
 
@@ -30,7 +28,7 @@ export const Board = ({ tiles }) => {
   const [solution, setSolution] = useState();
   const [animateSolution, setAnimateSolution] = useState(false);
 
-  const moveInterval = 200; // ms
+  const moveInterval = 130; // ms
 
   useInterval(
     () => {

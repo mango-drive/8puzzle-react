@@ -13,6 +13,9 @@ export const createGridLayout = (n, cellSize) => {
 };
 
 export const baseStyles = {
+  game: {
+    backgroundColor: "#8c91ab",
+  },
 
   tile: {
     width: cellSize*0.9,
@@ -48,12 +51,16 @@ export const baseStyles = {
     width : cellSize * 3,
     height: cellSize,
     position: "absolute",
-    display: "inline",
+    display: "inline-block",
     margin: 'auto',
     top: cellSize * 5
   },
 
   board: {
     backgroundColor: "#84a9ac",
+    // height: cellSize *3,
+    // width: cellSize * 3,
+    textAlign: "center",
+    margin: 'auto'
   },
 };
