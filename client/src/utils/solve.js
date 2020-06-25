@@ -107,16 +107,12 @@ const priorityCompare = (node1, node2) => {
 export const solve = (tiles) => {
   let solutionNode = null;
   const initialBoard = new Board(tiles);
-  console.log(initialBoard.tiles, initialBoard.dimension, initialBoard.emptySlot)
   const initialNode = new SearchNode(initialBoard, 0, null);
   const minPQ = new PriorityQueue([initialNode], priorityCompare);
 
-  const limit = 10;
-  let i = 0;
-  while (i < limit) {
+  while (true) {
     const currNode = minPQ.extract();
     const currBoard = currNode.board;
-    console.log(currBoard.tiles, currBoard.dimension, currBoard.emptySlot)
 
     if (currBoard.isGoal()) {
       solutionNode = currNode;
@@ -132,9 +128,8 @@ export const solve = (tiles) => {
       }
       minPQ.insert(new SearchNode(board, moves + 1, currNode));
     }
-
-    i++;
   }
+  
 
   let currNode = solutionNode;
   const solution = [];

@@ -30,7 +30,7 @@ export const Board = ({ tiles }) => {
   const [solution, setSolution] = useState();
   const [animateSolution, setAnimateSolution] = useState(false);
 
-  const moveInterval = 100; // ms
+  const moveInterval = 200; // ms
 
   useInterval(
     () => {
@@ -47,7 +47,6 @@ export const Board = ({ tiles }) => {
   );
 
   const onSolution = () => {
-    console.log("Get solution")
     const { tiles } = state;
     setSolution(getPathToSolution(tiles, dimension));
     setAnimateSolution(true);
