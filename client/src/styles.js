@@ -1,8 +1,8 @@
-export const cellSize = 100;
+export const cellSize = 80;
 
 export const createGridLayout = (n, cellSize) => {
   const layout = [];
-  const origin = Math.floor(n * cellSize / 2);
+  const origin = (n * cellSize / 2);
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       const x = j * cellSize - origin;
@@ -16,15 +16,15 @@ export const createGridLayout = (n, cellSize) => {
 export const baseStyles = {
   game: {
     backgroundColor: "#8c91ab",
+    position: 'relative'
   },
 
   tile: {
     width: cellSize * 0.9,
     height: cellSize * 0.9,
     borderRadius: "4px",
-    background: "white",
-    boxShadow: "rgba(0,0,0,0.2) 0 1px 2px 0",
-    color: "#333",
+    background: "#ffffff",
+    boxShadow: "rgba(0,0,0,0.4) 0 3px 3px 0",
     fontSize: "1.2rem",
     fontWeight: "bold",
     cursor: "pointer",
@@ -49,16 +49,14 @@ export const baseStyles = {
   solveButton: {
     width: cellSize * 3,
     height: cellSize,
-
-
-    // top: cellSize * 5
+    margin: "0 auto"
   },
 
   board: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    width: "110vw",
+    // width: cellSize * 4,
+    // height: cellSize * 4,
+    // margin: cellSize * 4 + " auto",
+    background: "red"
+
   },
 };

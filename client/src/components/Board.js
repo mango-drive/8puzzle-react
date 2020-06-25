@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
 
-
 export const Game = () => {
   const tiles = createSolvablePuzzle(4);
 
   return (
+    <div style={{}}>
       <Board tiles={tiles}></Board>
+    </div>
   );
 };
 
@@ -61,11 +62,21 @@ export const Board = ({ tiles }) => {
   };
 
   return (
-    <div style={baseStyles.board}>
-      <BoardLayout onTileClick={updatePosition} tiles={tiles} layout={layout} />
-      <button style={baseStyles.solveButton} onClick={onSolution}>
-        Solve
-      </button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignContent: "center",
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      <BoardLayout onTileClick={updatePosition} style={baseStyles.board} tiles={tiles} layout={layout} />
+      {/* <button style={baseStyles.solveButton}>Solve</button> */}
+      
     </div>
   );
 };
