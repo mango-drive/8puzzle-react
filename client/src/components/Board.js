@@ -8,7 +8,7 @@ import { createSolvablePuzzle } from "../utils/solve";
 
 
 export const Game = () => {
-  const tiles = createSolvablePuzzle(3);
+  const tiles = createSolvablePuzzle(4);
 
   return (
       <Board tiles={tiles}></Board>
