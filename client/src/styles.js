@@ -13,6 +13,10 @@ export const createGridLayout = (n, cellSize) => {
   return layout;
 };
 
+const disableSelect = {
+  
+}
+
 export const baseStyles = {
   game: {
     backgroundColor: "#8c91ab",
@@ -53,10 +57,5 @@ export const baseStyles = {
   },
 
   board: {
-    // width: cellSize * 4,
-    // height: cellSize * 4,
-    // margin: cellSize * 4 + " auto",
-    background: "red"
-
   },
 };
