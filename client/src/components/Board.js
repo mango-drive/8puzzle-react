@@ -7,11 +7,18 @@ import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
 
 export const Game = () => {
-  const tiles = createSolvablePuzzle(4);
+  const [dim, setDim] = useState(4);
+
+  const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(dim))
+  
+  const onNewGame = () => {
+    setInitialTiles(createSolvablePuzzle(dim))
+  }
 
   return (
-    <div style={{}}>
-      <Board tiles={tiles}></Board>
+    <div style={{height: '100%', display: 'grid'}}>
+      <Board tiles={initialTiles}></Board>
+      <button onClick={onNewGame}>New Game</button>
     </div>
   );
 };

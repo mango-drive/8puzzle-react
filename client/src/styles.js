@@ -13,9 +13,6 @@ export const createGridLayout = (n, cellSize) => {
   return layout;
 };
 
-const disableSelect = {
-  
-}
 
 export const baseStyles = {
   game: {
