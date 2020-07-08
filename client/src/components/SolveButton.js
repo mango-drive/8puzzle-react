@@ -1,9 +1,9 @@
 import React from 'react'
 import {baseStyles} from '../styles.js'
 
-export const SolveButton = (handleOnSolve) => {
+export const SolveButton = (onClick) => {
   return (
-    <button onClick={handleOnSolve} style={baseStyles.solveButton}>
+    <button onClick={onClick} style={baseStyles.solveButton}>
       Solve
     </button>
   );

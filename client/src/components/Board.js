@@ -5,46 +5,70 @@ import { cellSize, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
+import { SolveButton } from "./SolveButton";
 
 export const Game = () => {
   const [dim, setDim] = useState(3);
 
   const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(dim));
+  const [inSolutionAnimation, setInSolutionAnimation] = useState(false);
 
-  const onNewGame = () => {
+  const handleNewGame = () => {
     setInitialTiles(createSolvablePuzzle(dim));
+  };
+
+  const handleOnSolve = () => {
+    setInSolutionAnimation(true);
+  };
+
+  const handleOnSolutionAnimationComplete = () => {
+    setInSolutionAnimation(false);
   };
 
   return (
     <div style={{ height: "100%", display: "grid" }}>
-      <Board tiles={initialTiles}></Board>
-      <button onClick={onNewGame}>New Game</button>
+      <Board
+        tiles={initialTiles}
+        inSolutionAnimation={inSolutionAnimation}
+        onSolutionAnimationComplete={handleOnSolutionAnimationComplete}
+      ></Board>
+      <button onClick={handleNewGame}>New Game</button>
+      <button onClick={handleOnSolve}>Solve</button>
     </div>
   );
 };
 
-export const Board = ({ tiles }) => {
+export const Board = ({
+  tiles,
+  inSolutionAnimation,
+  onSolutionAnimationComplete,
+}) => {
   const [state, setState] = useState({
     tiles,
     slot: tiles.indexOf(0),
   });
 
+  const [solution, setSolution] = useState();
+
   useEffect(() => {
     setState({ tiles, slot: tiles.indexOf(0) });
-  }, [ tiles ]);
+  }, [tiles]);
+
+  useEffect(() => {
+    if (inSolutionAnimation) {
+      startSolutionAnimation();
+    }
+  }, [inSolutionAnimation]);
 
   const dimension = Math.sqrt(state.tiles.length);
   const layout = createGridLayout(dimension, cellSize);
-
-  const [solution, setSolution] = useState();
-  const [animateSolution, setAnimateSolution] = useState(false);
 
   const moveInterval = 130; // ms
 
   useInterval(
     () => {
       if (solution === undefined || solution.length == 0) {
-        setAnimateSolution(false);
+        onSolutionAnimationComplete();
       } else {
         const move = solution.shift();
         let tile1d = move.i * dimension + move.j;
@@ -52,25 +76,21 @@ export const Board = ({ tiles }) => {
       }
     },
     // use the interval only when animating.
-    animateSolution ? moveInterval : null
+    inSolutionAnimation ? moveInterval : null
   );
 
-  const onSolution = () => {
+  const startSolutionAnimation = () => {
     const { tiles } = state;
     setSolution(getPathToSolution(tiles, dimension));
-    setAnimateSolution(true);
   };
 
   const updatePosition = (index) => {
-    console.log("Clicked on", index);
     let { slot, tiles } = state;
-    console.log("State before", slot, tiles);
     if (areNeighbours(slot, index, dimension)) {
       // swap the values
       swap(tiles, slot, index);
       // store new slot index
       setState({ tiles, slot: index });
-      console.log("Swapped", slot, index);
     }
   };
 
