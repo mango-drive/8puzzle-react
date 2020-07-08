@@ -7,16 +7,16 @@ import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
 
 export const Game = () => {
-  const [dim, setDim] = useState(4);
+  const [dim, setDim] = useState(3);
 
-  const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(dim))
-  
+  const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(dim));
+
   const onNewGame = () => {
-    setInitialTiles(createSolvablePuzzle(dim))
-  }
+    setInitialTiles(createSolvablePuzzle(dim));
+  };
 
   return (
-    <div style={{height: '100%', display: 'grid'}}>
+    <div style={{ height: "100%", display: "grid" }}>
       <Board tiles={initialTiles}></Board>
       <button onClick={onNewGame}>New Game</button>
     </div>
@@ -24,11 +24,14 @@ export const Game = () => {
 };
 
 export const Board = ({ tiles }) => {
-  const slot = tiles.indexOf(0);
   const [state, setState] = useState({
     tiles,
-    slot,
+    slot: tiles.indexOf(0),
   });
+
+  useEffect(() => {
+    setState({ tiles, slot: tiles.indexOf(0) });
+  }, [ tiles ]);
 
   const dimension = Math.sqrt(state.tiles.length);
   const layout = createGridLayout(dimension, cellSize);
@@ -59,12 +62,15 @@ export const Board = ({ tiles }) => {
   };
 
   const updatePosition = (index) => {
+    console.log("Clicked on", index);
     let { slot, tiles } = state;
+    console.log("State before", slot, tiles);
     if (areNeighbours(slot, index, dimension)) {
       // swap the values
       swap(tiles, slot, index);
       // store new slot index
       setState({ tiles, slot: index });
+      console.log("Swapped", slot, index);
     }
   };
 
@@ -81,9 +87,13 @@ export const Board = ({ tiles }) => {
         transform: "translate(-50%, -50%)",
       }}
     >
-      <BoardLayout onTileClick={updatePosition} style={baseStyles.board} tiles={tiles} layout={layout} />
+      <BoardLayout
+        onTileClick={updatePosition}
+        style={baseStyles.board}
+        tiles={tiles}
+        layout={layout}
+      />
       {/* <button style={baseStyles.solveButton}>Solve</button> */}
-      
     </div>
   );
 };
