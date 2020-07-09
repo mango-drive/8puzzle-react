@@ -2,11 +2,11 @@ export const cellSize = 80;
 
 export const createGridLayout = (n, cellSize) => {
   const layout = [];
-  const origin = (n * cellSize / 2);
+  const center = (n * cellSize / 2);
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      const x = j * cellSize - origin;
-      const y = i * cellSize - origin;
+      const x = j * cellSize - center;
+      const y = i * cellSize - center;
       layout.push([x, y]);
     }
   }

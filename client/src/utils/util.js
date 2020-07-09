@@ -85,7 +85,8 @@ export const dragWithinBounds = (delta, position, bounds) => {
   return position;
 };
 
-export const squarify = (arr1D, dimension) => {
+export const squarify = (arr1D) => {
+  const dimension = Math.floor(Math.sqrt(arr1D.length));
   const arr2D = [];
   for (let i = 0; i < dimension; i++) {
     const row = [];
@@ -97,8 +98,8 @@ export const squarify = (arr1D, dimension) => {
   return arr2D;
 };
 
-export const getPathToSolution = (tiles, dimension) => {
-  const squareArr = squarify(tiles, dimension);
+export const getPathToSolution = (tiles) => {
+  const squareArr = squarify(tiles);
   return parseSolution(solve(squareArr));
 };
 
