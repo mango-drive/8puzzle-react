@@ -1,20 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
 import { areNeighbours, getPathToSolution } from "../utils/util";
 
-import { cellSize, createGridLayout, baseStyles } from "../styles";
+import { cellSize as CELLSIZE, createGridLayout, baseStyles } from "../styles";
 import { motion } from "framer-motion";
 import { useInterval } from "../hoc/useInterval";
 import { createSolvablePuzzle } from "../utils/solve";
 import { SolveButton } from "./SolveButton";
 
 export const Game = () => {
-  const [dim, setDim] = useState(3);
+  const [width, setWidth] = useState(3);
 
-  const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(dim));
+  const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(width));
   const [inSolutionAnimation, setInSolutionAnimation] = useState(false);
 
   const handleNewGame = () => {
-    setInitialTiles(createSolvablePuzzle(dim));
+    setInitialTiles(createSolvablePuzzle(width));
   };
 
   const handleOnSolve = () => {
@@ -23,6 +23,12 @@ export const Game = () => {
 
   const handleOnSolutionAnimationComplete = () => {
     setInSolutionAnimation(false);
+  };
+
+  const handleOnDimensionChange = (incrementDirection) => {
+    const newWidth = width + incrementDirection;
+    setInitialTiles(createSolvablePuzzle(newWidth));
+    setWidth(newWidth);
   };
 
   return (
@@ -34,6 +40,8 @@ export const Game = () => {
       ></Board>
       <button onClick={handleNewGame}>New Game</button>
       <button onClick={handleOnSolve}>Solve</button>
+      <button onClick={() => handleOnDimensionChange(1)}>+</button>
+      <button onClick={() => handleOnDimensionChange(-1)}>-</button>
     </div>
   );
 };
@@ -43,25 +51,28 @@ export const Board = ({
   inSolutionAnimation,
   onSolutionAnimationComplete,
 }) => {
+  let dimension = Math.sqrt(tiles.length);
+
   const [state, setState] = useState({
     tiles,
     slot: tiles.indexOf(0),
+    layout: createGridLayout(dimension, CELLSIZE),
   });
 
-  const [solution, setSolution] = useState();
-
   useEffect(() => {
-    setState({ tiles, slot: tiles.indexOf(0) });
+    setState({
+      tiles,
+      slot: tiles.indexOf(0),
+      layout: createGridLayout(dimension, CELLSIZE),
+    });
   }, [tiles]);
 
+  const [solution, setSolution] = useState();
   useEffect(() => {
     if (inSolutionAnimation) {
       startSolutionAnimation();
     }
   }, [inSolutionAnimation]);
-
-  const dimension = Math.sqrt(state.tiles.length);
-  const layout = createGridLayout(dimension, cellSize);
 
   const moveInterval = 130; // ms
 
@@ -110,10 +121,9 @@ export const Board = ({
       <BoardLayout
         onTileClick={updatePosition}
         style={baseStyles.board}
-        tiles={tiles}
-        layout={layout}
+        tiles={state.tiles}
+        layout={state.layout}
       />
-      {/* <button style={baseStyles.solveButton}>Solve</button> */}
     </div>
   );
 };
@@ -133,6 +143,7 @@ const BoardLayout = ({ tiles, layout, onTileClick }) => {
 
 const Tile = ({ value, pos, onTileClick }) => {
   let style = value ? baseStyles.tile : baseStyles.blankTile;
+  console.log(pos);
   const [x, y] = pos;
 
   return (
