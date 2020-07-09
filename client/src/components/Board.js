@@ -27,7 +27,7 @@ export const Game = () => {
 
   const handleOnDimensionChange = (incrementDirection) => {
     const newWidth = width + incrementDirection;
-    if (newWidth >= 2 && newWidth <= 4) {
+    if (newWidth > 1 && newWidth < 4) {
       setWidth(newWidth);
       setInitialTiles(createSolvablePuzzle(newWidth));
     }
