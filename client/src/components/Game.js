@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { baseStyles } from '../styles'
-import { Board } from './Board'
-import { createSolvablePuzzle } from '../utils/solve';
+import React, { useState } from "react";
+import { baseStyles } from "../styles";
+import { Board } from "./Board";
+import { createSolvablePuzzle } from "../utils/solve";
 
+import { Row, Container } from "react-bootstrap";
 
 export const Game = () => {
   const [width, setWidth] = useState(3);
@@ -31,7 +32,7 @@ export const Game = () => {
   };
 
   return (
-    <div style={{ height: "100%", display: "grid" }}>
+    <div style={baseStyles.game}>
       <Board
         tiles={initialTiles}
         width={width}
@@ -39,9 +40,18 @@ export const Game = () => {
         onSolutionAnimationComplete={handleOnSolutionAnimationComplete}
       ></Board>
       <button onClick={handleNewGame}>New Game</button>
-      <button onClick={handleOnSolve}>Solve</button>
-      <button onClick={() => handleOnDimensionChange(1)}>+</button>
-      <button onClick={() => handleOnDimensionChange(-1)}>-</button>
+      <button style={baseStyles.solveButton} onClick={handleOnSolve}>
+        Solve
+      </button>
+      <button style={{ gridRow: 5 }} onClick={() => handleOnDimensionChange(1)}>
+        +
+      </button>
+      <button
+        style={{ gridRow: 6 }}
+        onClick={() => handleOnDimensionChange(-1)}
+      >
+        -
+      </button>
     </div>
   );
 };

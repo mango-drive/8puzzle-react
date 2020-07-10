@@ -15,8 +15,16 @@ export const createGridLayout = (n, cellSize) => {
 
 export const baseStyles = {
   game: {
-    backgroundColor: "#8c91ab",
     position: "relative",
+    display: 'grid',
+    width: '100vw',
+    height: '100vh',
+    gridTemplateRows: '60px 60px 300px'
+  },
+
+  title: {
+    leftMargin: '100px',
+    fontSize: '24px'
   },
 
   tile: {
@@ -47,9 +55,7 @@ export const baseStyles = {
   },
 
   solveButton: {
-    width: cellSize * 3,
-    height: cellSize,
-    margin: "0 auto",
+    gridRow: 4
   },
 
   board: {
@@ -62,4 +68,5 @@ export const baseStyles = {
     left: "50%",
     transform: "translate(-50%, -50%)",
   },
+
 };
