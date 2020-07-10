@@ -11,11 +11,13 @@ export const Board = ({
   inSolutionAnimation,
   onSolutionAnimationComplete,
 }) => {
+  // Board state
   const [state, setState] = useState({
     tiles,
     slot: tiles.indexOf(0),
   });
 
+  // Update board state when tile prop changes (for new game)
   useEffect(() => {
     setState({
       tiles,
@@ -23,21 +25,27 @@ export const Board = ({
     });
   }, [tiles]);
 
+  // Solution initial state
   const [solution, setSolution] = useState();
+  // Search for solution when inSolutionAnimation prop
+  // switches from false to true
   useEffect(() => {
     if (inSolutionAnimation) {
-      const {tiles} = state;
+      const { tiles } = state;
       setSolution(getPathToSolution(tiles));
     }
   }, [inSolutionAnimation]);
 
+  // Solution Animation
   const moveInterval = 130; // ms
-
   useInterval(
+    // Callback that gets called every interval
     () => {
+      // If the path to the solution is empty, we are done
       if (solution === undefined || solution.length === 0) {
         onSolutionAnimationComplete();
       } else {
+        // Pop next move and cause GUI update
         const move = solution.shift();
         let tile1d = move.i * width + move.j;
         updatePosition(tile1d);
@@ -58,21 +66,9 @@ export const Board = ({
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignContent: "center",
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-      }}
-    >
+    <div style={baseStyles.board}>
       <BoardLayout
         onTileClick={updatePosition}
-        style={baseStyles.board}
         tiles={state.tiles}
         width={width}
       />
