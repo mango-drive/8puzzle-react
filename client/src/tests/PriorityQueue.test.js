@@ -1,4 +1,4 @@
-import PriorityQueue from './PriorityQueue'
+import PriorityQueue from '../utils/PriorityQueue'
 
 test('minPQ heapifies on construction', () => {
     const data = [1, 5, 3, 2, 1];
