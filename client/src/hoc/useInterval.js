@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useRef } from 'react';
-
+import { useEffect, useRef } from "react";
 
 // Source: Making Set Interval Declarative with React Hooks
 // https://overreacted.io/making-setinterval-declarative-with-react-hooks/

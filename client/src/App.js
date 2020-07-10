@@ -1,5 +1,5 @@
 import React from "react";
-import { Board, Game} from "./components/Board"
+import {Game} from "./components/Game"
 
 export default function App() {
   return <Game/>;
