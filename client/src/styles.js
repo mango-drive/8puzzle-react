@@ -1,4 +1,4 @@
-export const cellSize = 80;
+export const cellSize = 110;
 
 export const createGridLayout = (n, cellSize) => {
   const layout = [];
@@ -15,12 +15,13 @@ export const createGridLayout = (n, cellSize) => {
 
 export const baseStyles = {
   game: {
-    position: "relative",
-    display: 'grid',
-    width: '100vw',
-    height: '100vh',
-    gridTemplateRows: '60px 60px 300px'
+    // position: "relative",
+    // display: 'grid',
+    // width: '100vw',
+    // height: '100vh',
+    // gridTemplateRows: '60px 300px'
   },
+
 
   title: {
     leftMargin: '100px',
@@ -62,7 +63,7 @@ export const baseStyles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignContent: "center",
+    // alignContent: "center",
     position: "fixed",
     top: "50%",
     left: "50%",
