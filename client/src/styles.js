@@ -14,15 +14,6 @@ export const createGridLayout = (n, cellSize) => {
 };
 
 export const baseStyles = {
-  game: {
-    // position: "relative",
-    // display: 'grid',
-    // width: '100vw',
-    // height: '100vh',
-    // gridTemplateRows: '60px 300px'
-  },
-
-
   title: {
     leftMargin: '100px',
     fontSize: '24px'

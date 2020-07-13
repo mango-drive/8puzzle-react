@@ -4,11 +4,8 @@ import { Board } from "./Board";
 import { createSolvablePuzzle } from "../utils/solve";
 import "./game.css";
 
-import { Row, Container } from "react-bootstrap";
-
 export const Game = () => {
   const [width, setWidth] = useState(3);
-
   
   const [initialTiles, setInitialTiles] = useState(createSolvablePuzzle(width));
   const [inSolutionAnimation, setInSolutionAnimation] = useState(false);
